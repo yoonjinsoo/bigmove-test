@@ -1,0 +1,103 @@
+id,category,subcategory,name,description,base_price
+bed-single,bedroom-living,침대,싱글 침대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,40000
+bed-double,bedroom-living,침대,더블 침대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,40000
+bed-queen,bedroom-living,침대,퀸 침대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,70000
+bed-king,bedroom-living,침대,킹 침대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,80000
+sofa-2,bedroom-living,쇼파,2인용 쇼파,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,40000
+sofa-3,bedroom-living,쇼파,3인용 쇼파,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,50000
+sofa-4plus,bedroom-living,쇼파,4인용 이상 쇼파,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,70000
+closet-1door,bedroom-living,옷장,1도어 옷장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+closet-2door,bedroom-living,옷장,2도어 옷장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+closet-3door,bedroom-living,옷장,3도어 이상 옷장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+hanger-small,bedroom-living,행거,소형 행거,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+hanger-medium,bedroom-living,행거,중형 행거,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+hanger-large,bedroom-living,행거,대형 행거,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+storage-small,bedroom-living,수납장,소형 수납장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+storage-medium,bedroom-living,수납장,중형 수납장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+storage-large,bedroom-living,수납장,대형 수납장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dining-2,bedroom-living,식탁,2인용 식탁,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dining-4,bedroom-living,식탁,4인용 식탁,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dining-6plus,bedroom-living,식탁,6인용 이상 식탁,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dresser-small,bedroom-living,화장대,소형 화장대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dresser-medium,bedroom-living,화장대,중형 화장대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dresser-large,bedroom-living,화장대,대형 화장대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+curtain-small,bedroom-living,커튼,단형 커튼,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+curtain-medium,bedroom-living,커튼,중형 커튼,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+curtain-large,bedroom-living,커튼,장형 커튼,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+mirror-small,bedroom-living,거울,소형 거울,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+mirror-medium,bedroom-living,거울,중형 거울,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+mirror-large,bedroom-living,거울,대형 거울,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+desk-small,study,책상,소형 책상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+desk-medium,study,책상,중형 책상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+desk-large,study,책상,대형 책상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+chair-normal,study,의자,일반 의자,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+chair-special,study,의자,특수형태 의자,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+bookshelf-small,study,책장,소형 책장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+bookshelf-medium,study,책장,중형 책장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+bookshelf-large,study,책장,대형 책장,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+tv-32,digital-appliances,TV/모니터,32인치 이하 TV,평면,25000
+tv-32plus,digital-appliances,TV/모니터,32인치 이상 TV,평면,25000
+tv-50plus,digital-appliances,TV/모니터,50인치 이상 TV,평면,35000
+pc-desktop,digital-appliances,PC/노트북,데스크탑,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+pc-laptop,digital-appliances,PC/노트북,노트북,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+aircon-wall-small,digital-appliances,에어컨,벽걸이 10평형 이하,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,200000
+aircon-wall-large,digital-appliances,에어컨,벽걸이 10평형 이상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,200000
+aircon-stand-small,digital-appliances,에어컨,스탠드 10평형 이하,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,250000
+aircon-stand-large,digital-appliances,에어컨,스탠드 10평형 이상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,250000
+aircon-2in1-small,digital-appliances,에어컨,2in1 20평형 이하,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,300000
+aircon-2in1-large,digital-appliances,에어컨,2in1 20평형 이상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,300000
+washer-drum-small,digital-appliances,세탁기,드럼 10kg 이하,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,35000
+washer-drum-large,digital-appliances,세탁기,드럼 10kg 이상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,50000
+dryer-drum-small,digital-appliances,건조기,드럼 10kg 이하,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,35000
+dryer-drum-large,digital-appliances,건조기,드럼 10kg 이상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,50000
+fridge-small,digital-appliances,냉장고,양문형 소형(50~599),해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,40000
+fridge-medium,digital-appliances,냉장고,양문형 중형(600~799),해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,50000
+fridge-large,digital-appliances,냉장고,양문형 대형(800리터),해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,70000
+airpurifier-small,digital-appliances,공기청정기,소형 공기청정기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,35000
+airpurifier-medium,digital-appliances,공기청정기,중형 공기청정기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,45000
+airpurifier-large,digital-appliances,공기청정기,대형 공기청정기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,60000
+styler-medium,digital-appliances,의류관리기,중형 의류관리기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,50000
+styler-large,digital-appliances,의류관리기,대형 의류관리기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,70000
+vacuum-wired,digital-appliances,청소기,유선 청소기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,20000
+vacuum-wireless,digital-appliances,청소기,무선 청소기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,20000
+microwave-small,kitchen,전자레인지,전자레인지 20L 미만,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,25000
+microwave-large,kitchen,전자레인지,전자레인지 20L 이상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,30000
+water-purifier-top,kitchen,정수기,상단부 정수기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,25000
+water-purifier-bottom,kitchen,정수기,하단부 정수기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,25000
+dining-table-2,kitchen,주방 테이블,2인용 주방 테이블,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dining-table-4,kitchen,주방 테이블,4인용 주방 테이블,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dining-table-6,kitchen,주방 테이블,6인용 이상 주방 테이블,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dining-chair-2,kitchen,식탁 의자,식탁 의자 2개 이하,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dining-chair-more,kitchen,식탁 의자,식탁 의자 2개 이상,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dishwasher-small,kitchen,식기세척기,소형 식기세척기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,35000
+dishwasher-medium,kitchen,식기세척기,중형 식기세척기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,45000
+dishwasher-large,kitchen,식기세척기,대형 식기세척기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,60000
+foodwaste-medium,kitchen,음식물처리기,중형 음식물처리기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,35000
+foodwaste-large,kitchen,음식물처리기,대형 음식물처리기,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,50000
+gas-2,kitchen,가스레인지,2구 가스레인지,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+gas-3,kitchen,가스레인지,3구 가스레인지,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+gas-4plus,kitchen,가스레인지,4구 이상 가스레인지,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+bike-kids,exercise-transport,자전거,어린이용 자전거,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,25000
+bike-adult,exercise-transport,자전거,성인용 자전거,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,25000
+bike-special,exercise-transport,자전거,성인 특수용 자전거,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,40000
+kickboard-kids,exercise-transport,킥보드,어린이용 킥보드,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,25000
+kickboard-adult,exercise-transport,킥보드,성인용 전동 킥보드,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,35000
+scooter-adult,exercise-transport,스쿠터,성인용 스쿠터,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,50000
+evehicle-kids,exercise-transport,전동차,어린이용 전동차,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,40000
+exercise-dumbbell,etc,운동용품,덤벨,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+exercise-barbell,etc,운동용품,바벨,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+exercise-etc,etc,운동용품,기타 운동용품,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+plant-small,etc,화분,소형 화분,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+plant-medium,etc,화분,중형 화분,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+plant-large,etc,화분,대형 화분,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+massage-small,etc,안마의자,소형 안마의자,기본/프리미엄,90000
+massage-medium,etc,안마의자,중형 안마의자,기본/프리미엄,120000
+massage-large,etc,안마의자,대형 안마의자,기본/프리미엄,150000
+cattower-small,etc,캣타워,소형 캣타워,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+cattower-medium,etc,캣타워,중형 캣타워,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+cattower-large,etc,캣타워,대형 캣타워,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+stroller-baby,etc,유모차,유아용 유모차,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,35000
+stroller-trailer,etc,유모차,유아-트레일러형 유모차,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,45000
+dryer-small,etc,빨래 건조대,소형 빨래 건조대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dryer-medium,etc,빨래 건조대,중형 빨래 건조대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0
+dryer-large,etc,빨래 건조대,대형 빨래 건조대,해체 및 재설치 필요 시 진행불가 단순 이동은 이용가능,0

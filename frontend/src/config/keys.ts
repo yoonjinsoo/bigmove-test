@@ -1,0 +1,1 @@
+export const KAKAO_APP_KEY = '90bef708527c43520736556406b5e8cb'; 

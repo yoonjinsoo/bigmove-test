@@ -1,0 +1,28 @@
+{
+  "name": "bigmove-backend",
+  "version": "1.0.0",
+  "description": "BigMove Backend Server",
+  "scripts": {
+    "start": "python -m uvicorn app.main:app --reload",
+    "frontend": "cd ../frontend && npm run dev",
+    "dev": "concurrently \"npm run start\" \"npm run frontend\""
+  },
+  "dependencies": {
+    "@prisma/client": "^6.0.1",
+    "bcrypt": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.0.0",
+    "concurrently": "^8.2.0",
+    "prisma": "^6.0.1",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devServer": {
+    "allowedHosts": "all"
+  }
+}
