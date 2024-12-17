@@ -3,7 +3,6 @@ import sys
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import Response
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from .routes import (
     categories, orders, product, notification,
     admin, auth, payment, quote, review,
@@ -34,14 +33,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
-)
-
-# 세션 미들웨어 추가
-app.add_middleware(
-    SessionMiddleware,
-    secret_key="your-secret-key",  # Settings에서 가져오거나 환경 변수 사용 권장
-    same_site="lax",  # CSRF 보호
-    https_only=False  # 개발 환경에서는 False, 프로덕션에서는 True
 )
 
 # 요청/응답 로깅 미들웨어 강화
