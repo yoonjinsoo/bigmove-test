@@ -22,3 +22,4 @@ pyjwt==2.8.0
 itsdangerous>=2.0.1
 requests>=2.31.0
 psycopg2-binary>=2.9.9
+alembic>=1.13.0
