@@ -34,58 +34,23 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-# 요청/응답 로깅 미들웨어 강화
+# 요청/응답 로깅 미들웨어
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    """요청/응답 상세 로깅 미들웨어"""
+    """요청/응답 로깅 미들웨어"""
     # 요청 정보 로깅
     logger.info("=" * 50)
-    logger.info("요청 시작")
-    logger.info(f"URL: {request.url}")
-    logger.info(f"Method: {request.method}")
+    logger.info(f"Request: {request.method} {request.url}")
     logger.info(f"Headers: {dict(request.headers)}")
     
     try:
-        # 요청 바디 로깅 (가능한 경우)
-        body = await request.body()
-        if body:
-            logger.info(f"Request Body: {body.decode()}")
-    except Exception as e:
-        logger.error(f"요청 바디 로깅 실패: {str(e)}")
-
-    try:
-        # 응답 처리
         response = await call_next(request)
-        
-        # 응답 정보 로깅
-        logger.info("응답 정보")
-        logger.info(f"Status Code: {response.status_code}")
-        logger.info(f"Response Headers: {dict(response.headers)}")
-        
-        # 응답 바디 로깅 시도
-        try:
-            body = b""
-            async for chunk in response.body_iterator:
-                body += chunk
-            logger.info(f"Response Body: {body.decode()}")
-            
-            # 원래 응답 반환
-            return Response(
-                content=body,
-                status_code=response.status_code,
-                headers=dict(response.headers),
-                media_type=response.media_type
-            )
-        except Exception as e:
-            logger.error(f"응답 바디 로깅 실패: {str(e)}")
-            return response
-            
+        logger.info(f"Response Status: {response.status_code}")
+        return response
     except Exception as e:
-        logger.error(f"요청 처리 중 오류 발생: {str(e)}")
-        logger.exception("상세 에러 스택:")
+        logger.error(f"Error processing request: {str(e)}")
         raise
     finally:
-        logger.info("요청 종료")
         logger.info("=" * 50)
 
 # 라우터 등록
