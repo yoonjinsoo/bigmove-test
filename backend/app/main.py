@@ -12,15 +12,14 @@ from .database import engine, Base
 from .routes.auth import router as auth_router
 from .routes.coupon import router as coupon_router
 
-# 로깅 설정 강화
+# 기본 로깅 설정
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.StreamHandler(sys.stdout),  # 터미널에 출력
+        logging.StreamHandler(sys.stdout),
     ]
 )
-logger = logging.getLogger(__name__)
 
 app = FastAPI(title="BigMove API")
 
@@ -33,25 +32,6 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
-
-# 요청/응답 로깅 미들웨어
-@app.middleware("http")
-async def log_requests(request: Request, call_next):
-    """요청/응답 로깅 미들웨어"""
-    # 요청 정보 로깅
-    logger.info("=" * 50)
-    logger.info(f"Request: {request.method} {request.url}")
-    logger.info(f"Headers: {dict(request.headers)}")
-    
-    try:
-        response = await call_next(request)
-        logger.info(f"Response Status: {response.status_code}")
-        return response
-    except Exception as e:
-        logger.error(f"Error processing request: {str(e)}")
-        raise
-    finally:
-        logger.info("=" * 50)
 
 # 라우터 등록
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
