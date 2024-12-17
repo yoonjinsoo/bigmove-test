@@ -18,7 +18,6 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(sys.stdout),  # 터미널에 출력
-        logging.FileHandler('app.log')      # 파일에도 저장
     ]
 )
 logger = logging.getLogger(__name__)
