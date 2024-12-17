@@ -11,6 +11,10 @@ from .routes.coupon import router as coupon_router
 
 app = FastAPI(title="BigMove API")
 
+@app.get("/")
+async def root():
+    return {"status": "ok", "message": "BigMove API is running"}
+
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
