@@ -58,7 +58,7 @@ class UserResponse(UserBase):
     agreements: Optional[UserAgreements] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class User(UserBase):
     id: int
@@ -67,7 +67,7 @@ class User(UserBase):
     updated_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SignupRequest(BaseModel):
     email: str
@@ -77,3 +77,6 @@ class SignupRequest(BaseModel):
     provider_id: Optional[str] = None
     agreements: Dict[str, bool]
     is_social: bool = False
+
+    class Config:
+        from_attributes = True

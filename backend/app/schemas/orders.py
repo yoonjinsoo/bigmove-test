@@ -22,7 +22,10 @@ class OrderResponse(OrderBase):
         from_attributes = True
 
 class OrderList(BaseModel):
-    orders: List[OrderResponse] 
+    orders: List[OrderResponse]
+
+    class Config:
+        from_attributes = True
 
 class OrderSummaryResponse(BaseModel):
     id: int
@@ -58,6 +61,9 @@ class AddressCreate(BaseModel):
     to_detail_address: str
     distance: float
 
+    class Config:
+        from_attributes = True
+
 class AddressResponse(BaseModel):
     id: int
     from_address: str
@@ -68,4 +74,4 @@ class AddressResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

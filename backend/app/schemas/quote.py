@@ -41,4 +41,4 @@ class QuoteResponse(BaseModel):
     updated_at: datetime
 
     class Config:
-        from_attributes = True 
+        from_attributes = True

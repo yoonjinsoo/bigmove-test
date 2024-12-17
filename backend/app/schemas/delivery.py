@@ -25,6 +25,9 @@ class TemporaryBookingResponse(BaseModel):
     time: str
     expires_at: datetime  # 임시 예약 만료 시간
 
+    class Config:
+        from_attributes = True
+
 # 공통 응답 속성을 위한 기본 클래스
 class DeliveryResponseBase(BaseModel):
     success: bool = True
@@ -33,3 +36,6 @@ class DeliveryResponseBase(BaseModel):
 # 가능한 날짜 목록 응답 모델
 class AvailableDatesResponse(DeliveryResponseBase):
     dates: List[str]
+
+    class Config:
+        from_attributes = True

@@ -15,11 +15,6 @@ class UserList(UserBase):
     class Config:
         from_attributes = True
 
-class UserDetail(UserList):
-    last_login: Optional[datetime] = None
-    orders_count: Optional[int] = None
-    total_spent: Optional[float] = None
-
 class RecentUser(BaseModel):
     id: int
     email: str
@@ -39,6 +34,14 @@ class UserStats(BaseModel):
     class Config:
         from_attributes = True
 
+class UserDetail(UserList):
+    last_login: Optional[datetime] = None
+    orders_count: Optional[int] = None
+    total_spent: Optional[float] = None
+
+    class Config:
+        from_attributes = True
+
 # 배송 시간대 스키마
 class DeliveryTimeSlotBase(BaseModel):
     date: str
@@ -47,6 +50,9 @@ class DeliveryTimeSlotBase(BaseModel):
     max_capacity: int = 10
     is_loading_available: bool = True
     is_unloading_available: bool = True
+
+    class Config:
+        from_attributes = True
 
 class DeliveryTimeSlotCreate(DeliveryTimeSlotBase):
     pass
@@ -68,6 +74,9 @@ class DeliveryAreaRestrictionBase(BaseModel):
     max_daily_capacity: int = 50
     reason: Optional[str] = None
 
+    class Config:
+        from_attributes = True
+
 class DeliveryAreaRestrictionCreate(DeliveryAreaRestrictionBase):
     pass
 
@@ -84,3 +93,6 @@ class DeliveryAreaRestrictionResponse(DeliveryAreaRestrictionBase):
 class DeliveryStatisticsResponse(BaseModel):
     total_bookings: int
     today_bookings: int
+
+    class Config:
+        from_attributes = True
