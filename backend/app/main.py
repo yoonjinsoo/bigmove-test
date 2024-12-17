@@ -1,7 +1,4 @@
-import logging
-import sys
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import Response
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routes import (
     categories, orders, product, notification,
@@ -11,15 +8,6 @@ from .routes import (
 from .database import engine, Base
 from .routes.auth import router as auth_router
 from .routes.coupon import router as coupon_router
-
-# 기본 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout),
-    ]
-)
 
 app = FastAPI(title="BigMove API")
 
