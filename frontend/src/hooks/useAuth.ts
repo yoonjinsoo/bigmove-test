@@ -261,13 +261,13 @@ export const useAuth = () => {
         let redirectUri;
         switch(provider) {
           case 'google':
-            redirectUri = process.env.REACT_APP_GOOGLE_CALLBACK_URL;
+            redirectUri = `${window.location.origin}${process.env.REACT_APP_GOOGLE_CALLBACK_URL}`;
             break;
           case 'naver':
-            redirectUri = process.env.REACT_APP_NAVER_CALLBACK_URL;
+            redirectUri = `${window.location.origin}${process.env.REACT_APP_NAVER_CALLBACK_URL}`;
             break;
           case 'kakao':
-            redirectUri = process.env.REACT_APP_KAKAO_CALLBACK_URL;
+            redirectUri = `${window.location.origin}${process.env.REACT_APP_KAKAO_CALLBACK_URL}`;
             break;
           default:
             redirectUri = `${window.location.origin}/auth/callback/${provider}`;
