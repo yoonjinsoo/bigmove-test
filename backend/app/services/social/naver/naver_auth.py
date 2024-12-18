@@ -126,6 +126,7 @@ class NaverAuthService:
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "code": code,
+                "redirect_uri": self.redirect_uri,
                 "state": self.state
             }
             
