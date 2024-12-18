@@ -6,7 +6,7 @@ import { SignUpData, AuthResponse, SocialSignupData, SocialLoginParams, SocialPr
 import { setToken, getToken, removeToken } from '../utils/api';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // API 함수들
 const authApi = {
