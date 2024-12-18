@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import axios from 'axios';
 import { useToast } from '../../components/common/Toast';
 import { useQueryClient } from '@tanstack/react-query';
-
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+import api from '../../services/api';
 
 type SocialProvider = 'google' | 'naver' | 'kakao';
 
@@ -38,8 +36,7 @@ const SocialCallback = () => {
           return;
         }
 
-        const callbackUrl = `${API_URL}/api/auth/callback/${provider}?code=${code}&state=${state}`;
-        const response = await axios.get(callbackUrl);
+        const response = await api.get(`/auth/callback/${provider}?code=${code}&state=${state}`);
         console.log('Callback response:', response.data);
 
         // 회원가입 응답 처리 (temp_user_info가 있는 경우)
