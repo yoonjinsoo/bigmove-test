@@ -23,12 +23,22 @@ const SocialCallback = () => {
   const [isLoading, setIsLoading] = useState(false);
   const queryClient = useQueryClient();
 
-  const callbackUrl = `${API_URL}/api/auth/callback/${provider}?code=${location.search.split('code=')[1].split('&')[0]}&state=${location.search.split('state=')[1]}`;
-
   useEffect(() => {
     const handleCallback = async () => {
       try {
         setIsLoading(true);
+        const params = new URLSearchParams(location.search);
+        const code = params.get('code');
+        const state = params.get('state');
+        
+        if (!code || !state) {
+          console.error('Missing required parameters:', { code, state });
+          useAuthStore.getState().setError('소셜 로그인에 필요한 정보가 누락되었습니다.');
+          navigate('/auth/login', { replace: true });
+          return;
+        }
+
+        const callbackUrl = `${API_URL}/api/auth/callback/${provider}?code=${code}&state=${state}`;
         const response = await axios.get(callbackUrl);
         console.log('Callback response:', response.data);
 
