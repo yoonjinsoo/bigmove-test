@@ -21,9 +21,21 @@ const authApi = {
   },
 
   socialLogin: async (provider: string, redirect_uri: string) => {
-    const redirectUri = encodeURIComponent(
-      `${window.location.origin}/auth/callback/${provider}`
-    );
+    let redirectUri;
+    switch(provider) {
+      case 'google':
+        redirectUri = process.env.REACT_APP_GOOGLE_CALLBACK_URL;
+        break;
+      case 'naver':
+        redirectUri = process.env.REACT_APP_NAVER_CALLBACK_URL;
+        break;
+      case 'kakao':
+        redirectUri = process.env.REACT_APP_KAKAO_CALLBACK_URL;
+        break;
+      default:
+        redirectUri = `${window.location.origin}/auth/callback/${provider}`;
+    }
+    redirectUri = encodeURIComponent(redirectUri || '');
     const response = await axios.get(
       `${API_URL}/api/auth/login/${provider}?redirect_uri=${redirectUri}`
     );
@@ -246,10 +258,21 @@ export const useAuth = () => {
         startSocialAuth(provider, source);
         updateSocialAuthStatus('pending');
         
-        const redirectUri = encodeURIComponent(
-          `${window.location.origin}/auth/callback/${provider}`
-        );
-        
+        let redirectUri;
+        switch(provider) {
+          case 'google':
+            redirectUri = process.env.REACT_APP_GOOGLE_CALLBACK_URL;
+            break;
+          case 'naver':
+            redirectUri = process.env.REACT_APP_NAVER_CALLBACK_URL;
+            break;
+          case 'kakao':
+            redirectUri = process.env.REACT_APP_KAKAO_CALLBACK_URL;
+            break;
+          default:
+            redirectUri = `${window.location.origin}/auth/callback/${provider}`;
+        }
+        redirectUri = encodeURIComponent(redirectUri || '');
         const response = await axios.get(
           `${API_URL}/api/auth/login/${provider}?redirect_uri=${redirectUri}&source=${source}`
         );
