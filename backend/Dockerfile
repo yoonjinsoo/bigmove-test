@@ -14,5 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# 직접 실행
-CMD uvicorn app.main:app --host 0.0.0.0 --port 8080 --workers 1
+# 마이그레이션 실행 후 서버 시작
+CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8080 --workers 1
