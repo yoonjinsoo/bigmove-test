@@ -27,6 +27,7 @@ export interface User {
   name: string;
   role?: string;
   provider?: string;
+  provider_id?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -57,6 +58,7 @@ export interface TempUserInfo {
   email: string;
   name: string;
   provider: string;
+  provider_id: string;
 }
 
 export interface SocialSignupData {
@@ -68,13 +70,13 @@ export interface SocialSignupRequest {
   email: string;
   name: string;
   provider: string;
+  provider_id: string;
   agreements: {
     terms: boolean;
     privacy: boolean;
     privacyThirdParty: boolean;
     marketing: boolean;
   };
-  is_social: boolean;
 }
 
 export interface AuthError {

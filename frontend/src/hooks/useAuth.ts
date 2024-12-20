@@ -47,8 +47,8 @@ const authApi = {
       email: data.email,
       name: data.name,
       provider: data.provider,
+      provider_id: data.provider_id,
       agreements: data.agreements,
-      is_social: true
     });
     return response.data;
   },
@@ -89,7 +89,6 @@ const authService = {
         name: data.name,
         provider: data.provider,
         agreements: data.agreements,
-        is_social: true
       });
       return response.data;
     } catch (error) {

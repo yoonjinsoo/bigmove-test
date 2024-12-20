@@ -1,17 +1,10 @@
 // src/stores/authStore.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AuthResponse, User } from '../types/auth';
+import { AuthResponse, User, TempUserInfo } from '../types/auth';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
-
-interface TempUserInfo {
-  email: string;
-  name: string;
-  provider: string;
-  id?: string | null;
-}
 
 interface SocialSignupResponse {
   temp_user_info: TempUserInfo;

@@ -214,8 +214,8 @@ const SocialSignup: React.FC = () => {
         email: tempUserInfo.email,
         name: tempUserInfo.name,
         provider: tempUserInfo.provider,
+        provider_id: tempUserInfo.provider_id,
         agreements,
-        is_social: true
       };
 
       const response = await completeSocialSignup(requestData);

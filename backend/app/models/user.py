@@ -4,6 +4,7 @@ from app.database import Base
 from datetime import datetime
 from app.schemas.user import UserRole
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import UUID
 
 class User(Base):
     __tablename__ = "users"
