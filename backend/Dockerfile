@@ -14,9 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# 시작 스크립트 생성
-RUN printf '#!/bin/bash\nport=${PORT:-8000}\necho "Starting server on port $port"\npython -m uvicorn app.main:app --host 0.0.0.0 --port $port' > start.sh && \
-    chmod +x start.sh
-
 # 실행
-CMD ["bash", "start.sh"]
+CMD python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
