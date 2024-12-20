@@ -14,8 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# 환경변수 설정
-ENV PORT=8080
+# Railway에서 제공하는 PORT 사용
+ENV PYTHONUNBUFFERED=1
 
-# 시작 명령어
-CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 75
+# 직접 실행
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
