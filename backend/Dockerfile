@@ -14,8 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# Railway에서 제공하는 PORT 사용
+# 환경변수 설정
 ENV PYTHONUNBUFFERED=1
+ENV PORT=8000
 
-# 직접 실행
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# 디버깅을 위한 로그 레벨 설정
+ENV LOG_LEVEL=debug
+
+# 실행
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT --log-level debug
