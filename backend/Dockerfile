@@ -16,11 +16,14 @@ COPY . .
 
 # 시작 스크립트 생성
 RUN echo '#!/bin/bash\n\
+if [ -z "$PORT" ]; then\n\
+    PORT=8000\n\
+fi\n\
 echo "Running database migrations..."\n\
 alembic upgrade head\n\
-echo "Starting server on port ${PORT:-8000}"\n\
-exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}" --log-level debug' > start.sh && \
+echo "Starting server on port $PORT"\n\
+python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --log-level debug' > start.sh && \
     chmod +x start.sh
 
 # 실행
-CMD ["./start.sh"]
+CMD ["/bin/bash", "start.sh"]
