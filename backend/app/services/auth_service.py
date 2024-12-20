@@ -53,16 +53,17 @@ class AuthService:
         return user
 
     async def register_user(self, db: Session, user_data: UserCreate) -> dict:
-        # 트랜잭션 시작
-        self.db.begin()
-        
         try:
-            # 1. 약관 동의 검증 (DB 저장 전에 먼저 체크)
+            # 요청 데이터 로깅
+            logger.info(f"회원가입 요청 데이터: {user_data.dict()}")
+            
+            # 1. 모든 필수 검증 먼저 수행
             if not user_data.agreements or not all([
                 user_data.agreements.get('terms'),
                 user_data.agreements.get('privacy'),
                 user_data.agreements.get('privacy_third_party')
             ]):
+                logger.error(f"약관 동의 누락: {user_data.agreements}")
                 raise HTTPException(
                     status_code=400,
                     detail="필수 약관에 동의해주세요."
@@ -71,15 +72,25 @@ class AuthService:
             # 2. 이메일 중복 체크
             existing_user = self.db.query(User).filter(User.email == user_data.email).first()
             if existing_user:
+                logger.error(f"이메일 중복: {user_data.email}")
                 raise HTTPException(
                     status_code=400,
                     detail="이미 가입된 이메일입니다. 로그인을 해주세요."
                 )
+
+            # 3. 비밀번호 검증
+            if not user_data.password:
+                logger.error("비밀번호 누락")
+                raise HTTPException(
+                    status_code=400,
+                    detail="비밀번호가 필요합니다."
+                )
+
+            # 4. 모든 검증이 통과된 경우에만 DB 저장 진행
+            logger.info("모든 검증 통과, DB 저장 시작")
             
-            # 3. 비밀번호 해시화
             hashed_password = pwd_context.hash(user_data.password)
             
-            # 4. 사용자 생성
             db_user = User(
                 email=user_data.email,
                 name=user_data.name,
@@ -92,8 +103,9 @@ class AuthService:
             )
             
             self.db.add(db_user)
-            self.db.flush()  # ID 생성을 위한 flush
-            
+            self.db.flush()
+            logger.info(f"사용자 정보 저장 완료: {db_user.id}")
+
             # 5. 약관 동의 정보 저장
             user_agreements = UserAgreements(
                 user_id=db_user.id,
@@ -103,20 +115,22 @@ class AuthService:
                 marketing=user_data.agreements.get('marketing', False)
             )
             self.db.add(user_agreements)
-            
+            logger.info(f"약관 동의 정보 저장 완료: {user_agreements.dict()}")
+
             # 6. 웰컴 쿠폰 생성
             coupon_service = CouponService(db)
             coupon = await coupon_service.generate_signup_coupon(db_user.id)
-            
-            # 7. 액세스 토큰 생성
-            access_token = self.create_access_token(
-                data={"sub": user_data.email}
-            )
-            
-            # 8. 모든 작업이 성공적으로 완료되면 커밋
+            logger.info(f"웰컴 쿠폰 생성 완료: {coupon}")
+
+            # 7. 모든 작업이 성공하면 커밋
             self.db.commit()
-            
-            return {
+            logger.info("DB 트랜잭션 커밋 완료")
+
+            # 8. 액세스 토큰 생성
+            access_token = self.create_access_token(data={"sub": user_data.email})
+            logger.info("액세스 토큰 생성 완료")
+
+            response_data = {
                 "success": True,
                 "message": "회원가입이 완료되었습니다.",
                 "user": {
@@ -128,12 +142,15 @@ class AuthService:
                 "access_token": access_token,
                 "coupon": coupon
             }
-            
+            logger.info(f"회원가입 완료 응답: {response_data}")
+            return response_data
+
         except Exception as e:
-            # 9. 어떤 에러가 발생하더라도 무조건 롤백
             self.db.rollback()
-            logger.error(f"회원가입 처리 중 오류: {str(e)}")
-            
+            logger.error(f"회원가입 처리 중 오류 발생!")
+            logger.error(f"오류 타입: {type(e)}")
+            logger.error(f"오류 메시지: {str(e)}")
+            logger.error(f"요청 데이터: {user_data.dict()}")
             if isinstance(e, HTTPException):
                 raise e
             raise HTTPException(status_code=400, detail=str(e))
