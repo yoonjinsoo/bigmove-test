@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import Optional, Dict
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from ..models import User, UserAgreements
 from ..schemas.auth import UserCreate, UserLogin, SignupRequest
 from ..core.config import get_settings
@@ -18,10 +17,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import and_, or_
 import httpx
 from ..services.coupon_service import CouponService
+import bcrypt
 
 logger = logging.getLogger(__name__)
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 class AuthService:
     def __init__(self, db: Session):
@@ -53,6 +51,9 @@ class AuthService:
         return user
 
     async def register_user(self, db: Session, user_data: UserCreate) -> dict:
+        logger.info("========== 회원가입 프로세스 시작 ==========")
+        logger.info(f"[1] 받은 데이터: {user_data.dict()}")
+        
         try:
             # 요청 데이터 로깅
             logger.info(f"회원가입 요청 데이터: {user_data.dict()}")
@@ -89,7 +90,7 @@ class AuthService:
             # 4. 모든 검증이 통과된 경우에만 DB 저장 진행
             logger.info("모든 검증 통과, DB 저장 시작")
             
-            hashed_password = pwd_context.hash(user_data.password)
+            hashed_password = self.get_password_hash(user_data.password)
             
             db_user = User(
                 email=user_data.email,
@@ -155,8 +156,18 @@ class AuthService:
                 raise e
             raise HTTPException(status_code=400, detail=str(e))
 
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        return bcrypt.checkpw(
+            plain_password.encode('utf-8'), 
+            hashed_password.encode('utf-8')
+        )
+
     def get_password_hash(self, password: str) -> str:
-        return pwd_context.hash(password)
+        salt = bcrypt.gensalt()
+        return bcrypt.hashpw(
+            password.encode('utf-8'), 
+            salt
+        ).decode('utf-8')
 
     async def process_signup(self, signup_data: UserCreate):
         try:
