@@ -16,10 +16,13 @@ COPY . .
 
 # 환경변수 설정
 ENV PYTHONUNBUFFERED=1
-ENV PORT=8000
 
-# 디버깅을 위한 로그 레벨 설정
-ENV LOG_LEVEL=debug
+# 시작 스크립트 생성
+RUN echo '#!/bin/bash\n\
+PORT="${PORT:-8000}"\n\
+echo "Starting server on port $PORT"\n\
+uvicorn app.main:app --host 0.0.0.0 --port "$PORT" --log-level debug' > start.sh && \
+    chmod +x start.sh
 
 # 실행
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT --log-level debug
+CMD ["./start.sh"]
