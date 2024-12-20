@@ -15,15 +15,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # 시작 스크립트 생성
-RUN echo '#!/bin/bash\n\
-if [ -z "$PORT" ]; then\n\
-    PORT=8000\n\
-fi\n\
-echo "Running database migrations..."\n\
-alembic upgrade head\n\
-echo "Starting server on port $PORT"\n\
-python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --log-level debug' > start.sh && \
+RUN printf '#!/bin/bash\nport=${PORT:-8000}\necho "Starting server on port $port"\npython -m uvicorn app.main:app --host 0.0.0.0 --port $port' > start.sh && \
     chmod +x start.sh
 
 # 실행
-CMD ["/bin/bash", "start.sh"]
+CMD ["bash", "start.sh"]
