@@ -54,66 +54,93 @@ class AuthService:
 
     async def register_user(self, db: Session, user_data: UserCreate) -> dict:
         try:
-            # 토큰 생성 전 secret_key 확인
-            if not self.settings.JWT_SECRET_KEY:
-                raise ValueError("JWT_SECRET_KEY is not configured")
-            
-            # secret_key 파라미터 없이 호출
-            access_token = self.create_access_token(
-                data={"sub": user_data.email}
-            )
-            
-            # 이메일 중복 체크
-            logger.info(f"이메일 중복 체크 시작: {user_data.email}")
-            existing_user = self.db.query(User).filter(User.email == user_data.email).first()
-            if existing_user:
-                logger.info(f"중복된 이메일 발견: {user_data.email}")
+            # 1. 약관 동의 검증
+            if not user_data.agreements or not all([
+                user_data.agreements.get('terms'),
+                user_data.agreements.get('privacy'),
+                user_data.agreements.get('privacy_third_party')
+            ]):
                 raise HTTPException(
                     status_code=400,
-                    detail="이미 가입된 이메일입니다. 로그인을 해주세요."
+                    detail="필수 약관에 동의해주세요."
                 )
-            
-            logger.info(f"새로운 사용자 생성 시작: {user_data.email}")
-            # 비밀번호 해시화 - pwd_context 사용
-            hashed_password = pwd_context.hash(user_data.password)
-            
-            # 사용자 생성
-            db_user = User(
-                email=user_data.email,
-                name=user_data.name,
-                hashed_password=hashed_password,
-                provider="email",
-                is_active=True
-            )
-            
-            self.db.add(db_user)
-            self.db.commit()
-            self.db.refresh(db_user)
-            
-            logger.info(f"사용자 생성 완료: {user_data.email}, ID: {db_user.id}")
-            
-            # 웰컴 쿠폰 생성
-            coupon_service = CouponService(db)
-            await coupon_service.generate_signup_coupon(db_user.id)
-            
-            # 응답 데이터 구성
-            response_data = {
-                "user": {
-                    "id": db_user.id,
-                    "email": db_user.email,
-                    "name": db_user.name,
-                    "role": "user"
-                },
-                "access_token": access_token
-            }
-            
-            logger.info(f"회원가입 응답 데이터: {response_data}")
-            return response_data
-            
+
+            # 2. 트랜잭션 시작
+            try:
+                # 이메일 중복 체크
+                existing_user = self.db.query(User).filter(User.email == user_data.email).first()
+                if existing_user:
+                    raise HTTPException(
+                        status_code=400,
+                        detail="이미 가입된 이메일입니다. 로그인을 해주세요."
+                    )
+                
+                # 비밀번호 해시화
+                hashed_password = pwd_context.hash(user_data.password)
+                
+                # 사용자 생성
+                db_user = User(
+                    email=user_data.email,
+                    name=user_data.name,
+                    hashed_password=hashed_password,
+                    provider="email",
+                    is_active=True
+                )
+                
+                self.db.add(db_user)
+                self.db.flush()  # ID 생성을 위해 flush
+                
+                # 약관 동의 정보 저장
+                user_agreements = UserAgreements(
+                    user_id=db_user.id,
+                    terms=user_data.agreements['terms'],
+                    privacy=user_data.agreements['privacy'],
+                    privacy_third_party=user_data.agreements['privacy_third_party'],
+                    marketing=user_data.agreements.get('marketing', False)
+                )
+                self.db.add(user_agreements)
+                
+                # 웰컴 쿠폰 생성
+                coupon_service = CouponService(db)
+                coupon = await coupon_service.generate_signup_coupon(db_user.id)
+                
+                # 모든 처리가 성공하면 커밋
+                self.db.commit()
+                self.db.refresh(db_user)
+                
+                # 액세스 토큰 생성
+                access_token = self.create_access_token(
+                    data={"sub": user_data.email}
+                )
+                
+                # 응답 데이터 구성
+                response_data = {
+                    "success": True,
+                    "message": "회원가입이 완료되었습니다.",
+                    "user": {
+                        "id": db_user.id,
+                        "email": db_user.email,
+                        "name": db_user.name,
+                        "role": "user"
+                    },
+                    "access_token": access_token,
+                    "coupon": coupon
+                }
+                
+                logger.info(f"회원가입 완료: {user_data.email}")
+                return response_data
+                
+            except Exception as e:
+                # 트랜잭션 실패 시 롤백
+                self.db.rollback()
+                logger.error(f"회원가입 처리 중 오류: {str(e)}")
+                raise
+                
+        except HTTPException as he:
+            raise he
         except Exception as e:
             logger.error(f"회원가입 처리 중 예외 발생: {str(e)}")
-            self.db.rollback()
-            raise
+            raise HTTPException(status_code=400, detail=str(e))
 
     def get_password_hash(self, password: str) -> str:
         return pwd_context.hash(password)
