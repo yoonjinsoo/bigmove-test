@@ -14,14 +14,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# 환경변수 설정
-ENV PYTHONUNBUFFERED=1
-
 # 시작 스크립트 생성
 RUN echo '#!/bin/bash\n\
-PORT="${PORT:-8000}"\n\
-echo "Starting server on port $PORT"\n\
-uvicorn app.main:app --host 0.0.0.0 --port "$PORT" --log-level debug' > start.sh && \
+echo "Running database migrations..."\n\
+alembic upgrade head\n\
+echo "Starting server on port ${PORT:-8000}"\n\
+exec uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8000}" --log-level debug' > start.sh && \
     chmod +x start.sh
 
 # 실행
