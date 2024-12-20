@@ -14,11 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 소스 코드 복사
 COPY . .
 
-# 시작 스크립트 생성
-RUN echo '#!/bin/bash\n\
-alembic upgrade head\n\
-uvicorn app.main:app --host 0.0.0.0 --port "${PORT:-8080}" --workers 1' > start.sh && \
-    chmod +x start.sh
+# 환경변수 설정
+ENV PORT=8080
 
-# 시작 스크립트 실행
-CMD ["./start.sh"]
+# 시작 명령어
+CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --timeout-keep-alive 75
