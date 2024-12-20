@@ -85,7 +85,10 @@ class AuthService:
                 name=user_data.name,
                 hashed_password=hashed_password,
                 provider="email",
-                is_active=True
+                provider_id=None,
+                is_active=True,
+                role="user",
+                is_verified=False
             )
             
             self.db.add(db_user)
