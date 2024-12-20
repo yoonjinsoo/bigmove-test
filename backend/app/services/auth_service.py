@@ -65,20 +65,19 @@ class AuthService:
                     detail="필수 약관에 동의해주세요."
                 )
 
-            # 2. 트랜잭션 시작
+            # 2. 이메일 중복 체크
+            existing_user = self.db.query(User).filter(User.email == user_data.email).first()
+            if existing_user:
+                raise HTTPException(
+                    status_code=400,
+                    detail="이미 가입된 이메일입니다. 로그인을 해주세요."
+                )
+            
             try:
-                # 이메일 중복 체크
-                existing_user = self.db.query(User).filter(User.email == user_data.email).first()
-                if existing_user:
-                    raise HTTPException(
-                        status_code=400,
-                        detail="이미 가입된 이메일입니다. 로그인을 해주세요."
-                    )
-                
-                # 비밀번호 해시화
+                # 3. 비밀번호 해시화
                 hashed_password = pwd_context.hash(user_data.password)
                 
-                # 사용자 생성
+                # 4. 사용자 생성
                 db_user = User(
                     email=user_data.email,
                     name=user_data.name,
@@ -88,9 +87,9 @@ class AuthService:
                 )
                 
                 self.db.add(db_user)
-                self.db.flush()  # ID 생성을 위해 flush
+                self.db.flush()
                 
-                # 약관 동의 정보 저장
+                # 5. 약관 동의 정보 저장
                 user_agreements = UserAgreements(
                     user_id=db_user.id,
                     terms=user_data.agreements['terms'],
@@ -100,21 +99,19 @@ class AuthService:
                 )
                 self.db.add(user_agreements)
                 
-                # 웰컴 쿠폰 생성
+                # 6. 웰컴 쿠폰 생성
                 coupon_service = CouponService(db)
                 coupon = await coupon_service.generate_signup_coupon(db_user.id)
                 
-                # 모든 처리가 성공하면 커밋
-                self.db.commit()
-                self.db.refresh(db_user)
-                
-                # 액세스 토큰 생성
+                # 7. 액세스 토큰 생성
                 access_token = self.create_access_token(
                     data={"sub": user_data.email}
                 )
                 
-                # 응답 데이터 구성
-                response_data = {
+                # 8. 모든 작업이 성공하면 커밋
+                self.db.commit()
+                
+                return {
                     "success": True,
                     "message": "회원가입이 완료되었습니다.",
                     "user": {
@@ -127,14 +124,11 @@ class AuthService:
                     "coupon": coupon
                 }
                 
-                logger.info(f"회원가입 완료: {user_data.email}")
-                return response_data
-                
             except Exception as e:
-                # 트랜잭션 실패 시 롤백
+                # 9. 오류 발생 시 롤백
                 self.db.rollback()
                 logger.error(f"회원가입 처리 중 오류: {str(e)}")
-                raise
+                raise HTTPException(status_code=400, detail=str(e))
                 
         except HTTPException as he:
             raise he
