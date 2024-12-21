@@ -11,6 +11,7 @@ from .routes.coupon import router as coupon_router
 from datetime import datetime
 from .database import get_db
 import logging
+from sqlalchemy import text
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +20,9 @@ app = FastAPI(title="BigMove API")
 @app.get("/")
 async def health_check():
     try:
-        # DB 연결 테스트
+        # DB 연결 테스트 - text() 함수 사용
         db = next(get_db())
-        db.execute("SELECT 1")
+        db.execute(text("SELECT 1"))
         
         return {
             "status": "healthy",
