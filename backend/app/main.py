@@ -30,18 +30,21 @@ logger = logging.getLogger(__name__)
 
 @app.get("/")
 async def root():
-    logger.info("Root endpoint called")
+    logger.info("=== Health Check Started ===")
     try:
-        # 상세한 응답 추가
-        return {
+        response = {
             "status": "healthy",
-            "message": "BigMove API",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.utcnow().isoformat(),
+            "environment": os.getenv("ENVIRONMENT", "production")
         }
+        logger.info(f"Health Check Response: {response}")
+        return response
     except Exception as e:
-        logger.error(f"Error in root endpoint: {str(e)}")
-        logger.exception("Full error details:")
+        logger.error(f"Health Check Failed: {str(e)}")
+        logger.exception("Detailed Error:")
         raise
+    finally:
+        logger.info("=== Health Check Completed ===")
 
 @app.get("/api")
 async def health_check():
