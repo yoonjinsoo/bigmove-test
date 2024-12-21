@@ -168,9 +168,10 @@ export const useAuth = () => {
       });
       return response.data.user;
     },
-    enabled: !!token && location.pathname !== '/login',
+    enabled: !!token && !location.pathname.includes('/login'),
     retry: 1,
-    staleTime: 30000,
+    staleTime: 60000,
+    cacheTime: 3600000,
     onError: () => {
       handleLogout();
     }

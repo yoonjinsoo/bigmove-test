@@ -106,8 +106,18 @@ const LoginForm: React.FC<LoginFormProps> = () => {
       [name]: value
     }));
     
-    if (error && value.length === 1) setError(null);
+    if (error) {
+      debounce(() => setError(null), 300);
+    }
   }, [error]);
+
+  const debounce = (fn: Function, delay: number) => {
+    let timeoutId: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn(...args), delay);
+    };
+  };
 
   return (
     <SignUpContainer>
