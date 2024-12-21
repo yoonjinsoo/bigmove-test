@@ -97,12 +97,15 @@ const LoginForm: React.FC<LoginFormProps> = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'email') {
-      setEmail(value);
-    } else if (name === 'password') {
-      setPassword(value);
+    switch(name) {
+      case 'email':
+        setEmail(prev => value);
+        break;
+      case 'password':
+        setPassword(prev => value);
+        break;
     }
-    error && setError(null);
+    if (error) setError(null);
   };
 
   return (
