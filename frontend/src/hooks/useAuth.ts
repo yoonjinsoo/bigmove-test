@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 import { SignUpData, AuthResponse, SocialSignupData, SocialLoginParams, SocialProvider, SocialAuthParams, SocialSignupRequest } from '../types/auth';
@@ -116,29 +116,36 @@ export const useAuth = () => {
     updateSocialAuthStatus
   } = useAuthStore();
 
-  const token = getToken();
+  const { token } = useAuthStore();
+  const [lastValidated, setLastValidated] = useState<number | null>(null);
 
-  // 토큰 유효성 검사
   useEffect(() => {
     const validateToken = async () => {
-      if (token) {
-        try {
-          const response = await axios.get(`${API_URL}/api/auth/validate-token`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          if (!response.data.valid) {
-            handleLogout();
-          }
-        } catch (error) {
+      if (!token) return;
+      
+      if (lastValidated && Date.now() - lastValidated < 30 * 60 * 1000) {
+        return;
+      }
+
+      try {
+        const response = await axios.get(`${API_URL}/api/auth/validate-token`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (response.data.valid) {
+          setLastValidated(Date.now());
+        } else {
           handleLogout();
         }
+      } catch (error) {
+        handleLogout();
       }
     };
 
     validateToken();
-    const interval = setInterval(validateToken, 5 * 60 * 1000);
+    const interval = setInterval(validateToken, 30 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [token]);
+  }, [token, lastValidated]);
 
   const handleLogout = () => {
     // 토큰 제거
