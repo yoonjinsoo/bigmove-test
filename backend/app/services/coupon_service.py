@@ -21,7 +21,7 @@ class CouponService:
             )
             
             self.db.add(coupon)
-            await self.db.flush()
+            self.db.flush()
             
             return coupon
         except Exception as e:
