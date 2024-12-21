@@ -25,6 +25,14 @@ interface LoginFormProps {
   onSubmit?: (data: { email: string; password: string }) => void;
 }
 
+const debounce = (fn: Function, delay: number) => {
+  let timeoutId: NodeJS.Timeout;
+  return (...args: any[]) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+};
+
 const LoginForm: React.FC<LoginFormProps> = () => {
   const navigate = useNavigate();
   const { login, socialLogin } = useAuth();
@@ -99,6 +107,11 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     }
   };
 
+  const debouncedSetError = useCallback(
+    debounce((value: null) => setError(value), 300),
+    []
+  );
+
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -107,17 +120,9 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     }));
     
     if (error) {
-      debounce(() => setError(null), 300);
+      debouncedSetError(null);
     }
-  }, [error]);
-
-  const debounce = (fn: Function, delay: number) => {
-    let timeoutId: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => fn(...args), delay);
-    };
-  };
+  }, [error, debouncedSetError]);
 
   return (
     <SignUpContainer>
