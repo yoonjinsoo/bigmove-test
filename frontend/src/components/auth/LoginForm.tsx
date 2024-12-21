@@ -36,22 +36,16 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   const { loginRedirectInfo, setLoginRedirectInfo } = useAuthStore();
 
   useEffect(() => {
-    // 컴포넌트 마운트 시 전체 상태 확인
-    const currentState = useAuthStore.getState();
-    console.log('LoginForm state updated:', currentState);
-    console.log('loginRedirectInfo updated:', currentState.loginRedirectInfo);
-    
-    if (currentState.loginRedirectInfo?.provider) {
-      console.log('Found loginRedirectInfo, setting error:', currentState.loginRedirectInfo.message);
-      setError(currentState.loginRedirectInfo.message);
+    if (loginRedirectInfo?.provider) {
+      setError(loginRedirectInfo.message);
 
-      const buttonElement = document.querySelector(`[data-provider="${currentState.loginRedirectInfo.provider}"]`) as HTMLElement;
+      const buttonElement = document.querySelector(`[data-provider="${loginRedirectInfo.provider}"]`) as HTMLElement;
       if (buttonElement) {
         buttonElement.style.border = '2px solid #4285f4';
         buttonElement.style.boxShadow = '0 0 5px rgba(66, 133, 244, 0.5)';
       }
     }
-  }, [loginRedirectInfo]); // loginRedirectInfo를 의존성 배열에 추가
+  }, [loginRedirectInfo]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
