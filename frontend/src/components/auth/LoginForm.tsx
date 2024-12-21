@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
@@ -99,15 +99,15 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
     
-    if (error) setError(null);
-  };
+    if (error && value.length === 1) setError(null);
+  }, [error]);
 
   return (
     <SignUpContainer>

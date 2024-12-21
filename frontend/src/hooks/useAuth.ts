@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 import { SignUpData, AuthResponse, SocialSignupData, SocialLoginParams, SocialProvider, SocialAuthParams, SocialSignupRequest } from '../types/auth';
 import { setToken, getToken, removeToken } from '../utils/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -118,6 +118,7 @@ export const useAuth = () => {
 
   const { token } = useAuthStore();
   const [lastValidated, setLastValidated] = useState<number | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const validateToken = async () => {
@@ -167,8 +168,9 @@ export const useAuth = () => {
       });
       return response.data.user;
     },
-    enabled: !!token,
+    enabled: !!token && location.pathname !== '/login',
     retry: 1,
+    staleTime: 30000,
     onError: () => {
       handleLogout();
     }
