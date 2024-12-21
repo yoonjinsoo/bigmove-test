@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routes import (
@@ -68,3 +69,8 @@ ROUTER_CONFIGS = [
 
 for router, prefix, tag in ROUTER_CONFIGS:
     app.include_router(router, prefix=prefix, tags=[tag])
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.getenv("PORT", "8000"))
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
