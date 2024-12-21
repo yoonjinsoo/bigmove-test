@@ -103,7 +103,8 @@ const LoginForm: React.FC<LoginFormProps> = () => {
       ...prev,
       [name]: value
     }));
-    error && setError(null);
+    
+    if (error) setError(null);
   };
 
   return (
