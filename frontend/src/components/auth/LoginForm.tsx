@@ -102,9 +102,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     } else if (name === 'password') {
       setPassword(value);
     }
-    if (error) {
-      setError('');
-    }
+    error && setError(null);
   };
 
   return (
