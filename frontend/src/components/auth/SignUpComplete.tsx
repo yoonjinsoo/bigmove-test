@@ -81,7 +81,7 @@ const SignUpComplete: React.FC = () => {
   const auth = useAuth();
 
   const handleContinue = () => {
-    navigate('/item-selection');
+    navigate('/items');
   };
 
   return (
