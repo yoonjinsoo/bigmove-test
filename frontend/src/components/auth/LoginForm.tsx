@@ -8,6 +8,7 @@ import { NaverIcon, KakaoIcon, GoogleIcon } from './icons/SocialIcons';
 import axios from 'axios';
 import { useToast } from '../common/Toast';
 import { useAuthStore } from '../../store/authStore';
+import UserInfoInputs from './UserInfoInputs';
 
 const ErrorMessage = styled.div`
   color: #1a73e8;  // 구글 파란색으로 변경
@@ -28,6 +29,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   const navigate = useNavigate();
   const { login, socialLogin } = useAuth();
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: ''
   });
@@ -119,36 +121,18 @@ const LoginForm: React.FC<LoginFormProps> = () => {
         <p>아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link></p>
       </StyledSignUpSection>
       <FormWrapper onSubmit={handleSubmit}>
-        <FormGroup>
-          <Label htmlFor="email">
-            <FaEnvelope />
-            이메일(아이디로 사용됩니다)
-          </Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="이메일을 입력해주세요"
-            required
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label htmlFor="password">
-            <FaLock />
-            비밀번호
-          </Label>
-          <Input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="비밀번호를 입력해주세요"
-            required
-          />
-        </FormGroup>
+        <UserInfoInputs
+          formData={formData}
+          errors={{ 
+            name: '',
+            email: error || '', 
+            password: '' 
+          }}
+          onChange={handleChange}
+          showPasswordFields={true}
+          disabled={{ name: true }}
+        />
+        
         <RememberMeWrapper>
           <input
             type="checkbox"
