@@ -14,22 +14,33 @@ from datetime import datetime
 from .database import get_db
 import logging
 from sqlalchemy import text
+import sys
 
 logger = logging.getLogger(__name__)
 
 app = FastAPI(title="BigMove API")
 
-# 로깅 설정 추가
-logging.basicConfig(level=logging.DEBUG)
+# 로깅 설정 강화
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    stream=sys.stdout
+)
 logger = logging.getLogger(__name__)
 
 @app.get("/")
 async def root():
-    logger.info("Root endpoint called")  # 로그 추가
+    logger.info("Root endpoint called")
     try:
-        return {"message": "BigMove API"}
+        # 상세한 응답 추가
+        return {
+            "status": "healthy",
+            "message": "BigMove API",
+            "timestamp": datetime.utcnow().isoformat()
+        }
     except Exception as e:
         logger.error(f"Error in root endpoint: {str(e)}")
+        logger.exception("Full error details:")
         raise
 
 @app.get("/health")
