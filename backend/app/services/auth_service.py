@@ -125,71 +125,72 @@ class AuthService:
         ).decode('utf-8')
 
     async def process_signup(self, signup_data: UserCreate):
-        try:
-            # 1. 이메일 중복 체크
-            existing_user = self.db.query(User).filter(User.email == signup_data.email).first()
-            if existing_user:
-                raise Exception("이미 가입된 이메일입니다.")
+        # 트랜잭션 시작
+        async with self.db.begin() as transaction:
+            try:
+                # 1. 이메일 중복 체크
+                existing_user = self.db.query(User).filter(User.email == signup_data.email).first()
+                if existing_user:
+                    raise Exception("이미 가입된 이메일입니다.")
 
-            # 2. 비밀번호 해시화
-            if not signup_data.provider or signup_data.provider == 'email':
-                if not signup_data.password:
-                    raise Exception("비밀번호가 필요합니다.")
-                hashed_password = get_password_hash(signup_data.password)
-            else:
-                hashed_password = None
+                # 2. 비밀번호 해시화
+                if not signup_data.provider or signup_data.provider == 'email':
+                    if not signup_data.password:
+                        raise Exception("비밀번호가 필요합니다.")
+                    hashed_password = get_password_hash(signup_data.password)
+                else:
+                    hashed_password = None
 
-            # 3. 새 사용자 생성
-            user = User(
-                email=signup_data.email,
-                name=signup_data.name,
-                hashed_password=hashed_password,
-                is_active=True,
-                provider=signup_data.provider or 'email'
-            )
-            self.db.add(user)
-            self.db.flush()  # user.id 생성을 위해 flush
+                # 3. 새 사용자 생성
+                user = User(
+                    email=signup_data.email,
+                    name=signup_data.name,
+                    hashed_password=hashed_password,
+                    is_active=True,
+                    provider=signup_data.provider or 'email'
+                )
+                self.db.add(user)
+                await self.db.flush()  # user.id 생성을 위해 flush
 
-            # 4. 약관 동의 정보 저장
-            user_agreements = UserAgreements(
-                user_id=user.id,
-                terms=signup_data.agreements['terms'],
-                privacy=signup_data.agreements['privacy'],
-                privacy_third_party=signup_data.agreements['privacyThirdParty'],
-                marketing=signup_data.agreements.get('marketing', False)
-            )
-            self.db.add(user_agreements)
-            self.db.flush()
+                # 4. 약관 동의 정보 저장
+                user_agreements = UserAgreements(
+                    user_id=user.id,
+                    terms=signup_data.agreements['terms'],
+                    privacy=signup_data.agreements['privacy'],
+                    privacy_third_party=signup_data.agreements['privacyThirdParty'],
+                    marketing=signup_data.agreements.get('marketing', False)
+                )
+                self.db.add(user_agreements)
+                await self.db.flush()
 
-            # 5. 웰컴 쿠폰 생성
-            coupon_service = CouponService(self.db)
-            coupon = await coupon_service.generate_signup_coupon(user.id)
+                # 5. 웰컴 쿠폰 생성
+                coupon_service = CouponService(self.db)
+                coupon = await coupon_service.generate_signup_coupon(user.id)
 
-            # 6. 모든 작업이 성공하면 커밋
-            self.db.commit()
+                # 6. 액세스 토큰 생성
+                access_token = self.create_access_token(
+                    data={"sub": user.email}
+                )
 
-            # 7. 액세스 토큰 생성
-            access_token = self.create_access_token(
-                data={"sub": user.email}
-            )
+                # 7. 트랜잭션 커밋은 context manager가 자동으로 처리
 
-            return {
-                "success": True,
-                "message": "회원가입이 완료되었습니다.",
-                "access_token": access_token,
-                "user": {
-                    "id": str(user.id),
-                    "email": user.email,
-                    "name": user.name,
-                    "provider": user.provider,
-                    "role": user.role
-                },
-                "coupon": coupon
-            }
+                return {
+                    "success": True,
+                    "message": "회원가입이 완료되었습니다.",
+                    "access_token": access_token,
+                    "user": {
+                        "id": str(user.id),
+                        "email": user.email,
+                        "name": user.name,
+                        "provider": user.provider,
+                        "role": user.role
+                    },
+                    "coupon": coupon
+                }
 
-        except Exception as e:
-            self.db.rollback()
-            raise Exception(f"회원가입 처리 중 오류 발생: {str(e)}")
+            except Exception as e:
+                # 트랜잭션 롤백은 context manager가 자동으로 처리
+                raise Exception(f"회원가입 처리 중 오류 발생: {str(e)}")
 
     async def save_signup_info(self, signup_info: dict):
         """회원가입 정보 통합 저장 API 호출"""
