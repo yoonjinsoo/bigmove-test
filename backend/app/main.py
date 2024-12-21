@@ -8,12 +8,33 @@ from .routes import (
 from .database import engine, Base
 from .routes.auth import router as auth_router
 from .routes.coupon import router as coupon_router
+from datetime import datetime
+from .database import get_db
+import logging
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="BigMove API")
 
 @app.get("/")
-async def root():
-    return {"status": "ok", "message": "BigMove API is running"}
+async def health_check():
+    try:
+        # DB 연결 테스트
+        db = next(get_db())
+        db.execute("SELECT 1")
+        
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return {
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
 
 # CORS 설정
 app.add_middleware(
