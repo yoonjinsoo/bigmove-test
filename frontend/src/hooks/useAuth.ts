@@ -194,38 +194,20 @@ export const useAuth = () => {
   // 회원가입
   const signup = useMutation({
     mutationFn: async (data: SignUpData) => {
+      console.log('[회원가입] 요청 데이터:', data);
       try {
         console.log('회원가입 시도:', data.email);
         const response = await authApi.signup(data);
-        console.log('회원가입 성공:', response);
+        console.log('[회원가입] 응답:', response);
         return response;
-      } catch (error: any) {
-        console.error('회원가입 프로세스 에러:', {
-          error,
-          status: error.response?.status,
-          data: error.response?.data,
-          message: error.response?.data?.message,
-          detail: error.response?.data?.detail
-        });
-        
-        // API 응답에서 에러 메시지 확인
+      } catch (error) {
+        console.error('[회원가입] API 오류:', error);
         if (axios.isAxiosError(error)) {
-          const errorData = error.response?.data;
-          console.log('에러 응답 데이터:', errorData);
-          
-          // 이메일 중복 체크
-          if (error.response?.status === 400) {
-            if (errorData?.detail?.includes('이미 존재') || 
-                errorData?.message?.includes('이미 존재') ||
-                errorData?.detail?.includes('중복') || 
-                errorData?.message?.includes('중복')) {
-              throw new Error('이미 사용 중인 이메일입니다.');
-            }
-          }
-          const message = errorData?.detail || errorData?.message || '회원가입에 실패했습니다.';
-          throw new Error(message);
+          const errorMessage = error.response?.data?.detail || '회원가입에 실패했습니다.';
+          console.error('[회원가입] 상세 에러:', errorMessage);
+          throw new Error(errorMessage);
         }
-        throw error;
+        throw new Error('회원가입에 실패했습니다.');
       }
     },
     onSuccess: (data) => {
