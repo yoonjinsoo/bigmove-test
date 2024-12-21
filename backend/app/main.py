@@ -43,27 +43,14 @@ async def root():
         logger.exception("Full error details:")
         raise
 
-@app.get("/health")
+@app.get("/api")
 async def health_check():
-    try:
-        # 간단한 메모리 상태 체크
-        return JSONResponse(
-            status_code=status.HTTP_200_OK,
-            content={
-                "status": "healthy",
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        )
-    except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
-        return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={
-                "status": "unhealthy",
-                "error": str(e),
-                "timestamp": datetime.utcnow().isoformat()
-            }
-        )
+    logger.info("Health check endpoint called")
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "service": "BigMove API"
+    }
 
 # CORS 설정
 app.add_middleware(
