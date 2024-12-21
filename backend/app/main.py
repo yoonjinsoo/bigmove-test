@@ -1,6 +1,7 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from .routes import (
     categories, orders, product, notification,
     admin, auth, payment, quote, review,
@@ -18,25 +19,40 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI(title="BigMove API")
 
+# 로깅 설정 추가
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
 @app.get("/")
+async def root():
+    logger.info("Root endpoint called")  # 로그 추가
+    try:
+        return {"message": "BigMove API"}
+    except Exception as e:
+        logger.error(f"Error in root endpoint: {str(e)}")
+        raise
+
+@app.get("/health")
 async def health_check():
     try:
-        # DB 연결 테스트 - text() 함수 사용
-        db = next(get_db())
-        db.execute(text("SELECT 1"))
-        
-        return {
-            "status": "healthy",
-            "database": "connected",
-            "timestamp": datetime.utcnow().isoformat()
-        }
+        # 간단한 메모리 상태 체크
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content={
+                "status": "healthy",
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        )
     except Exception as e:
         logger.error(f"Health check failed: {str(e)}")
-        return {
-            "status": "unhealthy",
-            "error": str(e),
-            "timestamp": datetime.utcnow().isoformat()
-        }
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "unhealthy",
+                "error": str(e),
+                "timestamp": datetime.utcnow().isoformat()
+            }
+        )
 
 # CORS 설정
 app.add_middleware(
