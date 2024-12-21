@@ -16,17 +16,15 @@ class CouponService:
             coupon = Coupon(
                 user_id=user_id,
                 code=str(uuid.uuid4()),
-                amount=10000,  # 1만원 쿠폰
-                expiry_date=datetime.utcnow() + timedelta(days=30)  # 30일 유효기간
+                amount=10000,
+                expiry_date=datetime.utcnow() + timedelta(days=30)
             )
             
             self.db.add(coupon)
-            self.db.commit()
-            self.db.refresh(coupon)
+            await self.db.flush()
             
             return coupon
         except Exception as e:
-            self.db.rollback()
             raise HTTPException(
                 status_code=500,
                 detail=f"쿠폰 생성 중 오류가 발생했습니다: {str(e)}"
