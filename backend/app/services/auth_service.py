@@ -129,7 +129,7 @@ class AuthService:
             # 1. 이메일 중복 체크
             existing_user = self.db.query(User).filter(User.email == signup_data.email).first()
             if existing_user:
-                raise Exception("이미 가입된 이메일입니다.")
+                raise Exception("이미 가입된 이메일입니다. 로그인을 해주세요!")
 
             # 2. 비밀번호 해시화
             if not signup_data.provider or signup_data.provider == 'email':
