@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.sql import func
 from ..database import Base
-from datetime import datetime
 
 class Coupon(Base):
     __tablename__ = "coupons"
@@ -10,4 +10,4 @@ class Coupon(Base):
     code = Column(String, unique=True, index=True)
     amount = Column(Integer)
     expiry_date = Column(DateTime)
-    created_at = Column(DateTime, default=datetime.utcnow) 
+    created_at = Column(DateTime, server_default=func.now()) 
