@@ -3,7 +3,6 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
-import { SignUpContainer, Title } from './styles/SignUpStyles';
 import { NaverIcon, KakaoIcon, GoogleIcon } from './icons/SocialIcons';
 import axios from 'axios';
 import { useToast } from '../common/Toast';
@@ -31,6 +30,26 @@ const debounce = (fn: Function, delay: number) => {
     timeoutId = setTimeout(() => fn(...args), delay);
   };
 };
+
+const LoginContainer = styled.div`
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Title = styled.h1`
+  color: var(--text-color);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+
+  span {
+    color: #4ECDC4;
+  }
+`;
 
 const LoginForm: React.FC<LoginFormProps> = () => {
   const navigate = useNavigate();
@@ -119,7 +138,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   };
 
   return (
-    <SignUpContainer>
+    <LoginContainer>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <Title><span>BigMove</span> 로그인하기</Title>
       <StyledSignUpSection>
@@ -195,7 +214,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
       <StyledLoginSection>
         <Link to="/forgot-password">비밀번호를 잊으셨나요?</Link>
       </StyledLoginSection>
-    </SignUpContainer>
+    </LoginContainer>
   );
 };
 
