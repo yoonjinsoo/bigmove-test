@@ -35,11 +35,36 @@ async def register(
     signup_data: UserCreate,
     auth_service: AuthService = Depends(get_auth_service)
 ):
+    logger.info("=== 회원가입 프로세스 시작 ===")
     try:
-        return await auth_service.process_signup(signup_data)
+        logger.info(f"받은 회원가입 데이터: {signup_data.dict(exclude={'password'})}")
+        
+        # AuthService를 통한 회원가입 처리 전 검증
+        logger.info("회원가입 데이터 검증 시작")
+        if not all([
+            signup_data.service_agreement,
+            signup_data.privacy_agreement,
+            signup_data.third_party_agreement
+        ]):
+            logger.error(f"필수 동의 항목 누락 - 동의 현황: 서비스={signup_data.service_agreement}, "
+                        f"개인정보={signup_data.privacy_agreement}, "
+                        f"제3자={signup_data.third_party_agreement}")
+            raise HTTPException(status_code=400, detail="필수 약관에 동의해주세요")
+
+        # AuthService 처리
+        logger.info("AuthService.process_signup 호출")
+        result = await auth_service.process_signup(signup_data)
+        logger.info(f"회원가입 완료 - 사용자 ID: {result.get('user', {}).get('id')}")
+        return result
+        
     except Exception as e:
-        logger.error(f"회원가입 처리 중 오류: {str(e)}")
+        logger.error(f"회원가입 처리 중 오류 발생: {str(e)}")
+        logger.exception("상세 오류 정보:")
+        if isinstance(e, HTTPException):
+            raise
         raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        logger.info("=== 회원가입 프로세스 종료 ===")
 
 # 2. 로그인 통합 (일반/소셜)
 @router.post("/login")
@@ -98,18 +123,30 @@ async def social_callback(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings)
 ):
+    logger.info(f"=== 소셜 로그인 콜백 처리 시작 - Provider: {provider} ===")
     try:
         auth_service = get_social_auth_service(provider, settings)
+        logger.info("소셜 인증 서비스 초기화 완료")
+        
+        logger.info("콜백 처리 시작")
         result = await auth_service.handle_callback(
             code=code,
             state=state,
             request=request,
             db=db
         )
+        logger.info("소셜 인증 콜백 처리 완료")
+        
+        # 임시 저장소 데이터 확인
+        logger.info(f"임시 저장된 사용자 데이터: {result.get('user', {})}")
+        
         return result
     except Exception as e:
         logger.error(f"소셜 콜백 처리 중 오류: {str(e)}")
+        logger.exception("상세 오류 정보:")
         raise HTTPException(status_code=401, detail=str(e))
+    finally:
+        logger.info("=== 소셜 로그인 콜백 처리 종료 ===")
 
 # 테스트용 DB 초기화 (개발 환경에서만 사용)
 @router.delete("/test/reset-db")
