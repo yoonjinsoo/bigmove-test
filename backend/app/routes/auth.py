@@ -39,18 +39,18 @@ async def register(
     try:
         logger.info(f"받은 회원가입 데이터: {signup_data.dict(exclude={'password'})}")
         
-        # 약관 동의 검증 로직 수정 - 이 부분만 수정
+        # 약관 동의 검증 로직 수정 - 딕셔너리 접근 방식으로 수정
         logger.info("회원가입 데이터 검증 시작")
         agreements = signup_data.agreements
         if not all([
-            agreements.terms,          # service_agreement 대신 terms 사용
-            agreements.privacy,        # privacy_agreement 대신 privacy 사용
-            agreements.privacyThirdParty  # third_party_agreement 대신 privacyThirdParty 사용
+            agreements['terms'],          # 딕셔너리 키로 접근
+            agreements['privacy'],        # 딕셔너리 키로 접근
+            agreements['privacyThirdParty']  # 딕셔너리 키로 접근
         ]):
             logger.error(f"필수 동의 항목 누락 - 동의 현황: "
-                        f"이용약관={agreements.terms}, "
-                        f"개인정보={agreements.privacy}, "
-                        f"제3자={agreements.privacyThirdParty}")
+                        f"이용약관={agreements['terms']}, "
+                        f"개인정보={agreements['privacy']}, "
+                        f"제3자={agreements['privacyThirdParty']}")
             raise HTTPException(status_code=400, detail="필수 약관에 동의해주세요")
 
         # AuthService 처리
