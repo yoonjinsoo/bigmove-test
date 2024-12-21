@@ -110,13 +110,13 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     []
   );
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-  }, []);
+  };
 
   return (
     <SignUpContainer>
