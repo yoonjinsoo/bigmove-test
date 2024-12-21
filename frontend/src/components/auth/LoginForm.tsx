@@ -27,8 +27,10 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = () => {
   const navigate = useNavigate();
   const { login, socialLogin } = useAuth();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [rememberMe, setRememberMe] = useState(false);
   const location = useLocation();
   const { showToast } = useToast();
@@ -53,14 +55,14 @@ const LoginForm: React.FC<LoginFormProps> = () => {
 
     try {
       const response = await login.mutateAsync({ 
-        email, 
-        password 
+        email: formData.email, 
+        password: formData.password 
       });
 
       if (response && response.access_token) {
         if (rememberMe) {
-          localStorage.setItem('rememberedEmail', email);
-          localStorage.setItem('rememberedPassword', password);
+          localStorage.setItem('rememberedEmail', formData.email);
+          localStorage.setItem('rememberedPassword', formData.password);
         } else {
           localStorage.removeItem('rememberedEmail');
           localStorage.removeItem('rememberedPassword');
@@ -97,15 +99,11 @@ const LoginForm: React.FC<LoginFormProps> = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    switch(name) {
-      case 'email':
-        setEmail(prev => value);
-        break;
-      case 'password':
-        setPassword(prev => value);
-        break;
-    }
-    if (error) setError(null);
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    error && setError(null);
   };
 
   return (
@@ -129,7 +127,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
             type="email"
             id="email"
             name="email"
-            value={email}
+            value={formData.email}
             onChange={handleChange}
             placeholder="이메일을 입력해주세요"
             required
@@ -144,7 +142,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
             type="password"
             id="password"
             name="password"
-            value={password}
+            value={formData.password}
             onChange={handleChange}
             placeholder="비밀번호를 입력해주세요"
             required
