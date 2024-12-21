@@ -114,15 +114,17 @@ const LoginForm: React.FC<LoginFormProps> = () => {
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    
-    if (error) {
-      debouncedSetError(null);
-    }
-  }, [error, debouncedSetError]);
+    requestAnimationFrame(() => {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      
+      if (error) {
+        setError(null);
+      }
+    });
+  }, [error]);
 
   return (
     <SignUpContainer>
