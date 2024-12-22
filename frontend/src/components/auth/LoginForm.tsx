@@ -7,6 +7,7 @@ import { NaverIcon, KakaoIcon, GoogleIcon } from './icons/SocialIcons';
 import axios from 'axios';
 import { useToast } from '../common/Toast';
 import { useAuthStore } from '../../store/authStore';
+import SocialLogin from './SocialLogin';
 
 const ErrorMessage = styled.div`
   color: #1a73e8;  // 구글 파란색으로 변경
@@ -116,9 +117,6 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     <LoginContainer>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <Title><span>BigMove</span> 로그인하기</Title>
-      <StyledSignUpSection>
-        <p>아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link></p>
-      </StyledSignUpSection>
       <FormWrapper onSubmit={handleSubmit}>
         <FormGroup>
           <Label htmlFor="email">
@@ -161,34 +159,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
         </RememberMeWrapper>
         <Button type="submit">로그인</Button>
       </FormWrapper>
-      <StyledDivider>
-        <span>또는</span>
-      </StyledDivider>
-      <SocialLoginButton 
-        data-provider="naver" 
-        className="naver" 
-        onClick={() => handleSocialLogin('naver')}>
-        <NaverIcon />
-        네이버 로그인
-      </SocialLoginButton>
-      <SocialLoginButton 
-        data-provider="kakao" 
-        className="kakao" 
-        onClick={() => handleSocialLogin('kakao')}>
-        <KakaoIcon />
-        카카오톡 로그인
-      </SocialLoginButton>
-      <SocialLoginButton 
-        data-provider="google" 
-        className="google" 
-        onClick={() => handleSocialLogin('google')}>
-        <GoogleIcon />
-        구글 로그인
-      </SocialLoginButton>
-      <LoginDivider />
-      <StyledLoginSection>
-        <Link to="/forgot-password">비밀번호를 잊으셨나요?</Link>
-      </StyledLoginSection>
+      <SocialLogin />
     </LoginContainer>
   );
 };
@@ -285,56 +256,6 @@ const StyledSignUpSection = styled.div`
   }
 `;
 
-const SocialLoginButton = styled.button`
-  width: 80%;
-  padding: 0.8rem;
-  margin: 0.5rem auto;
-  border: 1px solid #ddd;
-  border-radius: 50px;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transform: scale(1);
-  transition: all 0.2s ease-in-out;
-  gap: 0.8rem;
-
-  &:hover {
-    transform: scale(1.02);
-  }
-
-  &.naver {
-    background: #03C75A;
-    color: white;
-    border: none;
-
-    &:hover {
-      background: #02b351;
-    }
-  }
-
-  &.kakao {
-    background: #FEE500;
-    color: #000000;
-    border: none;
-
-    &:hover {
-      background: #fdd835;
-    }
-  }
-
-  &.google {
-    color: #495057;
-  }
-  
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-`;
-
 const LoginDivider = styled.div`
   width: 80%;
   margin: 1rem auto;
@@ -362,35 +283,6 @@ const FormWrapper = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-`;
-
-const StyledDivider = styled.div`
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 1rem auto;
-  width: 80%;
-
-  span {
-    padding: 0 0.6rem;
-    color: #f5f5f5;
-    font-size: 1rem;
-  }
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid var(--light-gray);
-  }
-
-  &::before {
-    margin-right: 0rem;
-  }
-
-  &::after {
-    margin-left: 0rem;
-  }
 `;
 
 const RememberMeWrapper = styled.div`
