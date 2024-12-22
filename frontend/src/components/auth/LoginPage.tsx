@@ -58,12 +58,37 @@ const RememberMeWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 5px;
+  margin: 0rem 0 1.5rem;
+  width: 350px;
+  max-width: 100%;
   
   input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    background-color: #2A2A2A;
+    accent-color: #3498db;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #4D4D4D;
+    border: 1px solid #333;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    
+    &:checked {
+      background-color: #3498db;
+      border-color: #3498db;
+      
+      &:after {
+        content: '✓';
+        position: absolute;
+        color: white;
+        font-size: 12px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
   }
 
   label {
@@ -75,6 +100,7 @@ const RememberMeWrapper = styled.div`
 const StyledSignUpSection = styled.div`
   margin: 1rem 0;
   text-align: center;
+  color: #999;
   
   a {
     color: #3498db;
@@ -90,7 +116,8 @@ const StyledSignUpSection = styled.div`
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
 `;
 
 const Label = styled.label`
@@ -100,6 +127,7 @@ const Label = styled.label`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-bottom: 0.2rem;
 
   svg {
     font-size: 1.1rem;
@@ -107,7 +135,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input<{ hasError?: boolean }>`
-  width: 400px;
+  width: 350px;
   max-width: 100%;
   padding: 0.7rem;
   border: 1px solid ${props => props.hasError ? '#ff6b6b' : '#333'};
