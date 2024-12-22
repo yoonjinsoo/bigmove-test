@@ -18,6 +18,15 @@ const AgreementLabel = styled(Label)`
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const RequiredCheckbox = styled.input.attrs({ type: 'checkbox' })`
@@ -93,6 +102,14 @@ const AgreementLink = styled.a`
   
   &:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.7rem;
   }
 `;
 
