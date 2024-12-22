@@ -107,7 +107,7 @@ const MobileMenu = styled.div<{ isOpen: boolean }>`
   position: fixed;
   top: 0;
   right: ${props => props.isOpen ? '0' : '-70%'};
-  width: 30%;
+  width: 50%;
   height: 100vh;
   background-color: var(--dark-gray);
   padding: 2rem;
