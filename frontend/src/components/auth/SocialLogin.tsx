@@ -32,7 +32,7 @@ const SocialLogin = () => {
         data-provider="naver"
       >
         <NaverIcon />
-        네이버로 계속하기
+        네이버로 로그인하기
       </SocialLoginButton>
       <SocialLoginButton 
         className="kakao"
@@ -40,7 +40,7 @@ const SocialLogin = () => {
         data-provider="kakao"
       >
         <KakaoIcon />
-        카카오로 계속하기
+        카카오로 로그인하기
       </SocialLoginButton>
       <SocialLoginButton 
         className="google"
@@ -48,7 +48,7 @@ const SocialLogin = () => {
         data-provider="google"
       >
         <GoogleIcon />
-        구글로 계속하기
+        구글로 로그인하기
       </SocialLoginButton>
     </>
   );
@@ -92,7 +92,7 @@ const SocialLoginButton = styled.button`
   justify-content: center;
   gap: 0.5rem;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: 50px;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.2s;

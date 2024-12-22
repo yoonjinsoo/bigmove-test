@@ -117,6 +117,9 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     <LoginContainer>
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <Title><span>BigMove</span> 로그인하기</Title>
+      <StyledSignUpSection>
+        <p>아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link></p>
+      </StyledSignUpSection>
       <FormWrapper onSubmit={handleSubmit}>
         <FormGroup>
           <Label htmlFor="email">
