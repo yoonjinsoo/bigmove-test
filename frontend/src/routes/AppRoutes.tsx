@@ -6,7 +6,7 @@ import { SignupAgreements } from '../types/auth';
 // Pages
 import HomePage from '../pages/HomePage';
 import SignUpPage from '../pages/SignUpPage';
-import LoginForm from '../components/auth/LoginForm';
+import LoginPage from '../components/auth/LoginPage';
 import ItemListPage from '../pages/ItemListPage';
 import ItemDetailPage from '../pages/ItemDetailPage';
 import DeliveryDatePage from '../pages/DeliveryDatePage';
@@ -52,7 +52,7 @@ const AppRoutes: React.FC = () => {
       
       {/* Auth Routes */}
       {/* 일반 사용자 로그인은 /login 유지 */}
-      <Route path="/login" element={<LoginForm />} />
+      <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignUpPage />} />
       <Route path="/signup/form" element={<SignUpForm />} />
       <Route path="/signup/complete" element={<SignUpComplete />} />
