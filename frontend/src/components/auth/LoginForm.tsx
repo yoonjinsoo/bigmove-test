@@ -65,14 +65,8 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   const { loginRedirectInfo, setLoginRedirectInfo } = useAuthStore();
 
   useEffect(() => {
-    if (loginRedirectInfo?.provider) {
+    if (loginRedirectInfo?.provider && loginRedirectInfo?.message) {
       setError(loginRedirectInfo.message);
-
-      const buttonElement = document.querySelector(`[data-provider="${loginRedirectInfo.provider}"]`) as HTMLElement;
-      if (buttonElement) {
-        buttonElement.style.border = '2px solid #4285f4';
-        buttonElement.style.boxShadow = '0 0 5px rgba(66, 133, 244, 0.5)';
-      }
     }
   }, [loginRedirectInfo]);
 
@@ -124,17 +118,13 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     }
   };
 
-  const debouncedSetError = useCallback(
-    debounce((value: null) => setError(value), 300),
-    []
-  );
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    if (error) setError(null);
   };
 
   return (
