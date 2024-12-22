@@ -59,36 +59,7 @@ const SocialLogin = () => {
   );
 };
 
-const StyledDivider = styled.div`
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 1rem auto;
-  width: 80%;
-
-  span {
-    padding: 0 0.6rem;
-    color: #f5f5f5;
-    font-size: 1rem;
-  }
-
-  &::before,
-  &::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid var(--light-gray);
-  }
-
-  &::before {
-    margin-right: 0rem;
-  }
-
-  &::after {
-    margin-left: 0rem;
-  }
-`;
-
-const SocialLoginButton = styled.button`
+export const SocialLoginButton = styled.button`
   width: 80%;
   margin: 0.5rem auto;
   padding: 0.8rem;
@@ -136,7 +107,36 @@ const SocialLoginButton = styled.button`
   }
 `;
 
-const LoginDivider = styled.div`
+export const StyledDivider = styled.div`
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1rem auto;
+  width: 80%;
+
+  span {
+    padding: 0 0.6rem;
+    color: #f5f5f5;
+    font-size: 1rem;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  &::before {
+    margin-right: 0rem;
+  }
+
+  &::after {
+    margin-left: 0rem;
+  }
+`;
+
+export const LoginDivider = styled.div`
   width: 80%;
   margin: 1rem auto;
   border-bottom: 1px solid #ddd;

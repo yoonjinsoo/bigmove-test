@@ -11,79 +11,96 @@ const FeaturesSectionContainer = styled.section`
 const SectionTitle = styled.h2`
   font-size: 2.5rem;
   color: var(--cyan);
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem;  // 상하좌우 마진 조정
+  word-break: keep-all;
+  line-height: 1.3;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;   // 텍스트 가운데 정렬
 `;
 
 const SectionSubtitle = styled.p`
   font-size: 1.2rem;
   color: #f5f5f5;
-  margin-bottom: 3rem;
+  margin: 0 auto 3rem;  // 상하좌우 마진 조정
+  word-break: keep-all;
+  line-height: 1.5;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;   // 텍스트 가운데 정렬
 `;
 
 const FeatureList = styled.div`
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 1rem;  // 좌우 여백 추가
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);  // 모바일에서도 2열 유지
+    gap: 1rem;  // 간격 줄임
+  }
 `;
 
 const FeatureCardWrapper = styled.div`
   width: 100%;
-  height: 400px;
+  height: auto;  // 높이를 자동으로
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
-  &:hover {
-    transform: translateY(-10px) scale(1.03);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  @media (max-width: 768px) {
+    max-width: 400px;  // 모바일에서 최대 너비 제한
+    margin: 0 auto;    // 가운데 정렬
   }
 `;
 
 const FeatureCard = styled(animated.div)`
   background: rgba(47, 73, 94, 0.6);
   border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 3/4;  // 카드 비율 고정
   display: flex;
   flex-direction: column;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
 `;
 
 const ImageWrapper = styled.div`
-  width: 100%;
-  height: 100%; // 이미지 영역을 전체의 65%로 설정
+  flex: 5;  // 이미지 영역이 2의 비중
   position: relative;
+  overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block;
   }
 `;
 
 const TextContent = styled.div`
-  flex: 1;
-  padding: 0.5rem 1rem 1.5rem; // 상단 패딩을 줄이고 하단 패딩을 늘림
+  flex: 1;  // 텍스트 영역이 1의 비중
+  padding: 0.8rem;
+  background: rgba(47, 73, 94, 0.6);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start; // 시작 지점부터 정렬하도록 변경
   text-align: center;
 
   h3 {
-    margin-top: 0.5rem; // 상단 여백 추가
-    margin-bottom: 0.4rem;
-    font-size: 1.25rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.25rem);  // 반응형 폰트 크기
     color: #4ae4ca;
+    margin-bottom: 0.3rem;
   }
 
   p {
-    margin: 0;
-    font-size: 0.9rem;
-    line-height: 1.3;
+    font-size: clamp(0.7rem, 2vw, 0.9rem);  // 반응형 폰트 크기
     color: #f5f5f5;
     opacity: 0.8;
+    line-height: 1.2;
   }
 `;
 

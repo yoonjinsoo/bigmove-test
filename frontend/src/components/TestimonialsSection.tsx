@@ -40,13 +40,23 @@ const Testimonial = styled.div`
 
 const TestimonialsTitle = styled.h2`
   font-size: 2.5rem;
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem;
+  word-break: keep-all;
+  line-height: 1.3;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
 `;
 
 const TestimonialsSubtitle = styled.p`
   font-size: 1.2rem;
-  margin-bottom: 3rem;
+  margin: 0 auto 3rem;
   color: #ecf0f1;
+  word-break: keep-all;
+  line-height: 1.5;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
 `;
 
 const Comment = styled.p`
@@ -124,7 +134,7 @@ const TestimonialsSection: React.FC = () => {
     {
       name: '임○○ 고객님',
       type: '냉장고 이동',
-      comment: '중고나라에서 산 대형 냉장고 이사였는데, 전문가다운 모습에 정말 안심이 되었어요.',
+      comment: '중고나라에서 산 대형 냉장고 이사���는데, 전문가다운 모습에 정말 안심이 되었어요.',
     },
     {
       name: '한○○ 고객님',

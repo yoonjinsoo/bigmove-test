@@ -10,22 +10,30 @@ const FooterContainer = styled.footer`
 `;
 
 const FooterGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  justify-content: center;
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
-  border: none; // 기존 선 제거
-  padding-right: 10px;
-  margin-right: 160px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
 `;
 
 const FooterSection = styled.div`
+  flex: 1;
+  max-width: 300px;
+  min-width: 200px;
+  text-align: center;
+
   h3 {
     color: var(--cyan);
     margin-bottom: 1rem;
-    font-size: 1rem; // 1rem에서 0.9rem으로 축소
+    font-size: 1rem;
   }
 
   ul {
