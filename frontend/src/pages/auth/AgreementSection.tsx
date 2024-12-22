@@ -18,10 +18,10 @@ const AgreementLabel = styled(Label)`
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 1rem;
+  font-size: 0.9rem;
 
   @media (max-width: 768px) {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
   }
 
   @media (max-width: 480px) {

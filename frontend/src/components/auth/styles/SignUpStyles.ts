@@ -261,6 +261,14 @@ export const Label = styled.label`
   color: #666;
   font-size: 0.9rem;
   
+  @media (max-width: 768px) {
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
+  
   svg {
     color: #4ECDC4;
     font-size: 1.2rem;
