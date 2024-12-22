@@ -58,9 +58,8 @@ const RememberMeWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0rem 0 1.5rem;
-  width: 350px;
-  max-width: 100%;
+  margin: 0 auto 1.5rem;
+  width: 80%;
   
   input[type="checkbox"] {
     width: 16px;
@@ -118,6 +117,8 @@ const FormGroup = styled.div`
   flex-direction: column;
   gap: 0.4rem;
   margin-bottom: 1rem;
+  width: 80%;
+  margin: 0 auto;
 `;
 
 const Label = styled.label`
@@ -135,8 +136,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input<{ hasError?: boolean }>`
-  width: 350px;
-  max-width: 100%;
+  width: 100%;
   padding: 0.7rem;
   border: 1px solid ${props => props.hasError ? '#ff6b6b' : '#333'};
   border-radius: 8px;

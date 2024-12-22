@@ -13,6 +13,7 @@ import { ToastProvider } from './components/common/Toast';
 import type { DefaultTheme } from 'styled-components';
 import AdminDashboard from './pages/admin/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import ScrollToTop from './components/common/ScrollToTop';
 
 const theme: DefaultTheme = {
   colors: {
@@ -39,14 +40,15 @@ const queryClient = new QueryClient({
 
 const App: React.FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
+    <Router>
+      <ScrollToTop />
       <ThemeProvider theme={theme}>
-        <GlobalStyle />
-        <Router>
+        <QueryClientProvider client={queryClient}>
           <SignUpProvider>
             <ItemSelectionProvider>
               <OrderProvider>
                 <ToastProvider>
+                  <GlobalStyle />
                   <Header />
                   <AppRoutes />
                   <Footer />
@@ -54,9 +56,9 @@ const App: React.FC = () => {
               </OrderProvider>
             </ItemSelectionProvider>
           </SignUpProvider>
-        </Router>
+        </QueryClientProvider>
       </ThemeProvider>
-    </QueryClientProvider>
+    </Router>
   );
 };
 
