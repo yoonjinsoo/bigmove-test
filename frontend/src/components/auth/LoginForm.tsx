@@ -23,7 +23,7 @@ interface LoginFormProps {
 
 const LoginContainer = styled.div`
   max-width: 500px;
-  margin: 0 auto;
+  margin: 80px auto 0;
   padding: 2rem;
   display: flex;
   flex-direction: column;
