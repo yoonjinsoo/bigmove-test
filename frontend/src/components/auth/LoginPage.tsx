@@ -58,7 +58,7 @@ const RememberMeWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0 auto 1.5rem;
+  margin: 0.5rem auto 1.5rem;
   width: 80%;
   
   input[type="checkbox"] {
@@ -115,10 +115,9 @@ const StyledSignUpSection = styled.div`
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  margin-bottom: 1rem;
+  gap: 0.5rem;
   width: 80%;
-  margin: 0 auto;
+  margin: 0 auto 1rem;
 `;
 
 const Label = styled.label`
@@ -128,7 +127,7 @@ const Label = styled.label`
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0rem;
 
   svg {
     font-size: 1.1rem;
