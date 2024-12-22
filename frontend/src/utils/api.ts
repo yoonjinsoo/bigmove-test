@@ -1,5 +1,6 @@
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { useAuthStore } from '../store/authStore';
 
 const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY || 'your-secret-key';
@@ -42,11 +43,14 @@ export const api = axios.create({
   },
 });
 
-// 인터셉터 설정
+// Request 인터셉터 수정
 api.interceptors.request.use((config) => {
-  const token = getToken();
+  const token = useAuthStore.getState().token;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
+}, 
+(error) => {
+  return Promise.reject(error);
 });

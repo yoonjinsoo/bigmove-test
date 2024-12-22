@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import { Title } from './styles/SignUpStyles';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import SocialLogin from './SocialLogin';
+import { useAuth } from '../../hooks/useAuth';
+import { useState } from 'react';
 
 const ErrorMessage = styled.div`
   color: #1a73e8;  // 구글 파란색으로 변경
@@ -173,48 +175,74 @@ const Input = styled.input<{ hasError?: boolean }>`
 `;
 
 const LoginPage: React.FC = () => {
+  const { login, error: authError } = useAuth();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await login.mutateAsync(formData);
+  };
+
   return (
     <LoginContainer>
-      <StyledTitle>BigMove 로그인하기</StyledTitle>
-      <StyledSignUpSection>
-        <p>아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link></p>
-      </StyledSignUpSection>
+      {authError && <ErrorMessage>{authError}</ErrorMessage>}
+      <form onSubmit={handleSubmit}>
+        <StyledTitle>BigMove 로그인하기</StyledTitle>
+        <StyledSignUpSection>
+          <p>아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link></p>
+        </StyledSignUpSection>
 
-      <FormGroup>
-        <Label htmlFor="email">
-          <FaEnvelope />
-          이메일
-        </Label>
-        <Input
-          type="email"
-          id="email"
-          name="email"
-          placeholder="이메일을 입력해주세요"
-        />
-      </FormGroup>
+        <FormGroup>
+          <Label htmlFor="email">
+            <FaEnvelope />
+            이메일
+          </Label>
+          <Input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="이메일을 입력해주세요"
+            value={formData.email}
+            onChange={handleChange}
+          />
+        </FormGroup>
 
-      <FormGroup>
-        <Label htmlFor="password">
-          <FaLock />
-          비밀번호
-        </Label>
-        <Input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="비밀번호를 입력해주세요"
-        />
-      </FormGroup>
+        <FormGroup>
+          <Label htmlFor="password">
+            <FaLock />
+            비밀번호
+          </Label>
+          <Input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="비밀번호를 입력해주세요"
+            value={formData.password}
+            onChange={handleChange}
+          />
+        </FormGroup>
 
-      <RememberMeWrapper>
-        <input
-          type="checkbox"
-          id="rememberMe"
-        />
-        <label htmlFor="rememberMe">로그인 정보 기억하기</label>
-      </RememberMeWrapper>
-      <Button type="submit">로그인</Button>
-      <SocialLogin />
+        <RememberMeWrapper>
+          <input
+            type="checkbox"
+            id="rememberMe"
+          />
+          <label htmlFor="rememberMe">로그인 정보 기억하기</label>
+        </RememberMeWrapper>
+        <Button type="submit">로그인</Button>
+        <SocialLogin />
+      </form>
     </LoginContainer>
   );
 };

@@ -122,6 +122,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     const validateToken = async () => {
+      const token = useAuthStore.getState().token;
       if (!token) return;
       
       if (lastValidated && Date.now() - lastValidated < 30 * 60 * 1000) {
@@ -149,9 +150,6 @@ export const useAuth = () => {
   }, [token, lastValidated]);
 
   const handleLogout = () => {
-    // 토큰 제거
-    removeToken();
-    
     // React Query 캐시 초기화
     queryClient.clear();
     
@@ -185,7 +183,10 @@ export const useAuth = () => {
     },
     onSuccess: (data) => {
       if (data?.access_token) {
-        setToken(data.access_token);
+        // React Query 캐시에 사용자 정보 저장
+        queryClient.setQueryData(['user'], data.user);
+        
+        // Zustand store에 토큰과 사용자 정보 저장
         handleAuthSuccessWithCache(queryClient, data);
         
         setTimeout(() => {
@@ -196,8 +197,6 @@ export const useAuth = () => {
     onError: (error: any) => {
       const message = error.response?.data?.message || '로그인에 실패했습니다.';
       setError(message);
-    },
-    onSettled: () => {
     }
   });
 
