@@ -64,35 +64,14 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   const [error, setError] = useState<string | null>(null);
   const { loginRedirectInfo, setLoginRedirectInfo } = useAuthStore();
 
-  useEffect(() => {
-    if (loginRedirectInfo?.provider && loginRedirectInfo?.message) {
-      setError(loginRedirectInfo.message);
-    }
-  }, [loginRedirectInfo]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-
     try {
-      const response = await login.mutateAsync({ 
+      await login.mutateAsync({ 
         email: formData.email, 
         password: formData.password 
       });
-
-      if (response && response.access_token) {
-        if (rememberMe) {
-          localStorage.setItem('rememberedEmail', formData.email);
-          localStorage.setItem('rememberedPassword', formData.password);
-        } else {
-          localStorage.removeItem('rememberedEmail');
-          localStorage.removeItem('rememberedPassword');
-        }
-      } else {
-        setError('로그인 응답이 올바르지 않습니다.');
-      }
     } catch (err) {
-      console.error('Login error:', err);
       setError('로그인에 실패했습니다.');
     }
   };
@@ -124,7 +103,6 @@ const LoginForm: React.FC<LoginFormProps> = () => {
       ...prev,
       [name]: value
     }));
-    if (error) setError(null);
   };
 
   return (
