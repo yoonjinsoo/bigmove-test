@@ -8,6 +8,7 @@ import axios from 'axios';
 import { useToast } from '../common/Toast';
 import { useAuthStore } from '../../store/authStore';
 import SocialLogin from './SocialLogin';
+import { Title } from './styles/SignUpStyles';
 
 const ErrorMessage = styled.div`
   color: #1a73e8;  // 구글 파란색으로 변경
@@ -41,15 +42,11 @@ const LoginContainer = styled.div`
   align-items: center;
 `;
 
-const Title = styled.h1`
-  color: var(--text-color);
+const StyledTitle = styled(Title)`
   text-align: center;
-  margin-bottom: 2rem;
-  font-size: 1.8rem;
-
-  span {
-    color: #4ECDC4;
-  }
+  width: 100%;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
 `;
 
 const LoginForm: React.FC<LoginFormProps> = () => {
@@ -116,7 +113,7 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   return (
     <LoginContainer>
       {error && <ErrorMessage>{error}</ErrorMessage>}
-      <Title><span>BigMove</span> 로그인하기</Title>
+      <StyledTitle>BigMove 로그인하기</StyledTitle>
       <StyledSignUpSection>
         <p>아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link></p>
       </StyledSignUpSection>

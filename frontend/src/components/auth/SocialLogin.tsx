@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { NaverIcon, KakaoIcon, GoogleIcon } from './icons/SocialIcons';
 import { useAuth } from '../../hooks/useAuth';
+import { Link } from 'react-router-dom';
 
 const SocialLogin = () => {
   const { socialLogin } = useAuth();
@@ -50,6 +51,10 @@ const SocialLogin = () => {
         <GoogleIcon />
         구글로 로그인하기
       </SocialLoginButton>
+      <LoginDivider />
+      <StyledLoginSection>
+        <Link to="/forgot-password">비밀번호를 잊으셨나요?</Link>
+      </StyledLoginSection>
     </>
   );
 };
@@ -128,6 +133,27 @@ const SocialLoginButton = styled.button`
   svg {
     width: 20px;
     height: 20px;
+  }
+`;
+
+const LoginDivider = styled.div`
+  width: 80%;
+  margin: 1rem auto;
+  border-bottom: 1px solid #ddd;
+`;
+
+const StyledLoginSection = styled.div`
+  text-align: center;
+  margin-top: 0.5rem;
+
+  a {
+    color: #3498db;
+    text-decoration: none;
+    font-size: 0.9rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
