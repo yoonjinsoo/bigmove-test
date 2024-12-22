@@ -98,13 +98,19 @@ const LoginForm: React.FC<LoginFormProps> = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+    requestAnimationFrame(() => {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+      
+      if (error) {
+        setError(null);
+      }
+    });
+  }, [error]);
 
   return (
     <LoginContainer>
@@ -125,8 +131,8 @@ const LoginForm: React.FC<LoginFormProps> = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="이메일을 입력해주세요"
             autoComplete="email"
+            placeholder="이메일을 입력해주세요"
           />
         </FormGroup>
         <FormGroup>
@@ -140,8 +146,8 @@ const LoginForm: React.FC<LoginFormProps> = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="비밀번호를 입력해주세요"
             autoComplete="current-password"
+            placeholder="비밀번호를 입력해주세요"
           />
         </FormGroup>
         <RememberMeWrapper>
