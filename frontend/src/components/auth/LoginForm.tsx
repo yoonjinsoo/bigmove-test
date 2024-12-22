@@ -63,11 +63,12 @@ const LoginForm: React.FC<LoginFormProps> = () => {
   const { showToast } = useToast();
   const [error, setError] = useState<string | null>(null);
   const { loginRedirectInfo, setLoginRedirectInfo } = useAuthStore();
+  const loginMutation = useAuth().login;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login.mutateAsync({ 
+      await loginMutation.mutateAsync({ 
         email: formData.email, 
         password: formData.password 
       });
