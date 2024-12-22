@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Title } from './styles/SignUpStyles';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
+import SocialLogin from './SocialLogin';
 
 const ErrorMessage = styled.div`
   color: #1a73e8;  // 구글 파란색으로 변경
@@ -186,6 +187,7 @@ const LoginPage: React.FC = () => {
         <label htmlFor="rememberMe">로그인 정보 기억하기</label>
       </RememberMeWrapper>
       <Button type="submit">로그인</Button>
+      <SocialLogin />
     </LoginContainer>
   );
 };
