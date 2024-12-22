@@ -1,12 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { useAuth } from '../../hooks/useAuth';
-import { NaverIcon, KakaoIcon, GoogleIcon } from './icons/SocialIcons';
-import axios from 'axios';
-import { useToast } from '../common/Toast';
-import { useAuthStore } from '../../store/authStore';
 import SocialLogin from './SocialLogin';
 import { Title } from './styles/SignUpStyles';
 
@@ -25,14 +21,6 @@ interface LoginFormProps {
   onSubmit?: (data: { email: string; password: string }) => void;
 }
 
-const debounce = (fn: Function, delay: number) => {
-  let timeoutId: NodeJS.Timeout;
-  return (...args: any[]) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => fn(...args), delay);
-  };
-};
-
 const LoginContainer = styled.div`
   max-width: 500px;
   margin: 0 auto;
@@ -50,17 +38,13 @@ const StyledTitle = styled(Title)`
 `;
 
 const LoginForm: React.FC<LoginFormProps> = () => {
-  const navigate = useNavigate();
-  const { login, socialLogin } = useAuth();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
   const [rememberMe, setRememberMe] = useState(false);
-  const location = useLocation();
-  const { showToast } = useToast();
   const [error, setError] = useState<string | null>(null);
-  const { loginRedirectInfo, setLoginRedirectInfo } = useAuthStore();
   const loginMutation = useAuth().login;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,21 +64,6 @@ const LoginForm: React.FC<LoginFormProps> = () => {
       login.reset();
     };
   }, [login]);
-
-  const handleSocialLogin = async (provider: string) => {
-    try {
-      const result = await socialLogin.mutateAsync({ 
-        provider,
-        source: 'login'
-      });
-      
-      if (result.authUrl) {
-        window.location.href = result.authUrl;
-      }
-    } catch (error) {
-      setError('소셜 로그인 중 오류가 발생했습니다.');
-    }
-  };
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -256,27 +225,6 @@ const StyledSignUpSection = styled.div`
   }
 `;
 
-const LoginDivider = styled.div`
-  width: 80%;
-  margin: 1rem auto;
-  border-bottom: 1px solid #ddd;
-`;
-
-const StyledLoginSection = styled.div`
-  text-align: center;
-  margin-top: 0.5rem;
-
-  a {
-    color: #3498db;
-    text-decoration: none;
-    font-size: 0.9rem;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-`;
-
 const FormWrapper = styled.form`
   width: 80%;
   margin: 0 auto;
@@ -302,18 +250,5 @@ const RememberMeWrapper = styled.div`
     font-size: 14px;
   }
 `;
-
-const getProviderKoreanName = (provider: string) => {
-  switch (provider) {
-    case 'naver':
-      return '네이버';
-    case 'kakao':
-      return '카카오톡';
-    case 'google':
-      return '구글';
-    default:
-      return '';
-  }
-};
 
 export default LoginForm;
