@@ -183,15 +183,19 @@ export const useAuth = () => {
     },
     onSuccess: (data) => {
       if (data?.access_token) {
-        queryClient.setQueryData(['user'], data.user);
+        // 1. 토큰 저장
+        setToken(data.access_token);
+        
+        // 2. 상태 업데이트
         handleAuthSuccessWithCache(queryClient, data);
-        setTimeout(() => {
-          window.location.href = '/items';
-        }, 0);
+        queryClient.setQueryData(['user'], data.user);
+        
+        // 3. 페이지 이동 (React Router 사용)
+        navigate('/items');
       }
     },
     onError: (error: any) => {
-      handleLogout();  // 로그인 실패시 이전 세션 정리
+      handleLogout();
       const message = error.response?.data?.message || '로그인에 실패했습니다.';
       setError(message);
     }
