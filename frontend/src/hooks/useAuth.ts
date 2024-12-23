@@ -183,18 +183,15 @@ export const useAuth = () => {
     },
     onSuccess: (data) => {
       if (data?.access_token) {
-        // React Query 캐시에 사용자 정보 저장
         queryClient.setQueryData(['user'], data.user);
-        
-        // Zustand store에 토큰과 사용자 정보 저장
         handleAuthSuccessWithCache(queryClient, data);
-        
         setTimeout(() => {
           window.location.href = '/items';
         }, 0);
       }
     },
     onError: (error: any) => {
+      handleLogout();  // 로그인 실패시 이전 세션 정리
       const message = error.response?.data?.message || '로그인에 실패했습니다.';
       setError(message);
     }
