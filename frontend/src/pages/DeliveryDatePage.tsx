@@ -18,25 +18,37 @@ import useOrderStore from '../store/orderStore'; // orderStore 추가
 const PageContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
+
+  > ${ButtonContainer} {
+    margin-top: 0rem;
+  }
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
 `;
 
 const DeliveryOptions = styled.div`
   display: flex;
-  gap: 1rem;
+  flex-direction: row;
+  gap: 0.5rem;
   margin-bottom: 2rem;
   justify-content: center;
+  width: 100%;
 `;
 
 const OptionButton = styled.button<{ selected: boolean }>`
-  padding: 1rem;
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem;
   border: 2px solid ${props => props.selected ? 'var(--cyan)' : 'var(--mediumGray)'};
   border-radius: 8px;
   background: ${props => props.selected ? 'var(--darkGray)' : '#282B30'};
   cursor: pointer;
-  width: 200px;
   color: ${props => props.selected ? 'var(--cyan)' : 'var(--darkGray)'};
   transition: all 0.2s ease;
+  font-size: clamp(0.75rem, 2vw, 1rem);
 
   &:hover {
     border-color: var(--cyan);
@@ -53,7 +65,13 @@ const OptionButton = styled.button<{ selected: boolean }>`
 const OptionPrice = styled.div`
   font-weight: bold;
   color: var(--cyan);
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
+`;
+
+const OptionDescription = styled.div`
+  font-size: clamp(0.65rem, 1.6vw, 0.85rem);
+  margin-top: 0.25rem;
 `;
 
 const Title = styled.h2`
@@ -64,31 +82,92 @@ const Title = styled.h2`
 `;
 
 const PageLayout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0rem;
   margin-top: 2rem;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
 `;
 
-const CalendarContainer = styled.div`
+// 스타일 컴포넌트의 props 타입 정의
+interface CalendarContainerProps {
+  selectedOption: DeliveryOption | null;
+}
+
+const CalendarContainer = styled.div<CalendarContainerProps>`
   .react-calendar {
-    width: 400px;
-    margin-left: 20px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
     background: var(--darkGray);
     border: 1px solid var(--cyan);
     border-radius: 8px;
     padding: 16px;
     font-family: Arial, Helvetica, sans-serif;
     color: var(--lightGray);
-  }
 
-  .react-calendar__navigation {
-    margin-bottom: 16px;
+    @media (min-width: 768px) {
+      margin-left: 20px;
+    }
 
     button {
-      min-width: 44px;
+      padding: 8px 4px;
+      font-size: 14px;
+
+      @media (min-width: 768px) {
+        padding: 8px;
+        font-size: 16px;
+      }
+    }
+
+    .react-calendar__navigation {
+      margin-bottom: 16px;
+
+      button {
+        min-width: 44px;
+        background: none;
+        font-size: 16px;
+        color: var(--lightGray);
+
+        &:enabled:hover,
+        &:enabled:focus {
+          background-color: var(--cyan);
+          color: var(--darkGray);
+        }
+      }
+    }
+
+    .react-calendar__month-view__weekdays {
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 8px;
+
+      abbr {
+        text-decoration: none;
+        color: var(--cyan);
+      }
+    }
+
+    .react-calendar__month-view__weekdays__weekday:first-child abbr,
+    .react-calendar__month-view__days > div > button:nth-child(7n + 1) {
+      color: #ff4d4d;
+    }
+
+    .react-calendar__month-view__weekdays__weekday:last-child abbr,
+    .react-calendar__month-view__days > div > button:nth-child(7n) {
+      color: #4d94ff;
+    }
+
+    .react-calendar__month-view__days__day {
+      padding: 8px;
       background: none;
-      font-size: 16px;
+      font-size: 14px;
       color: var(--lightGray);
 
       &:enabled:hover,
@@ -96,66 +175,167 @@ const CalendarContainer = styled.div`
         background-color: var(--cyan);
         color: var(--darkGray);
       }
-    }
-  }
 
-  .react-calendar__month-view__weekdays {
-    text-align: center;
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 8px;
-
-    abbr {
-      text-decoration: none;
-      color: var(--cyan);
-    }
-  }
-
-  .react-calendar__month-view__weekdays__weekday:first-child abbr,
-  .react-calendar__month-view__days > div > button:nth-child(7n + 1) {
-    color: #ff4d4d;  // 일요일
-  }
-
-  .react-calendar__month-view__weekdays__weekday:last-child abbr,
-  .react-calendar__month-view__days > div > button:nth-child(7n) {
-    color: #4d94ff;  // 토요일
-  }
-
-  .react-calendar__month-view__days__day {
-    padding: 8px;
-    background: none;
-    font-size: 14px;
-    color: var(--lightGray);
-
-    &:enabled:hover,
-    &:enabled:focus {
-      background-color: var(--cyan);
-      color: var(--darkGray);
+      &--weekend {
+        color: var(--darkGray);
+      }
     }
 
-    &--weekend {
-      color: var(--darkGray);
+    .react-calendar__tile--active {
+      background: var(--cyan) !important;
+      color: var(--darkGray) !important;
+      border-radius: 4px;
     }
-  }
 
-  .react-calendar__tile--active {
-    background: var(--cyan) !important;
-    color: var(--darkGray) !important;
-    border-radius: 4px;
-  }
+    .react-calendar__tile--disabled {
+      background-color: var(--mediumGray);
+      color: var(--lightGray);
+    }
 
-  .react-calendar__tile--disabled {
-    background-color: var(--mediumGray);
-    color: var(--lightGray);
+    .react-calendar__tile {
+      position: relative;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      &:enabled {
+        background: none;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: rgba(0, 255, 255, 0.2) !important;
+          color: var(--cyan) !important;
+        }
+      }
+    }
+
+    .react-calendar__tile--disabled {
+      opacity: 0.3;
+      background: none !important;
+      cursor: default;
+
+      &:hover {
+        background: none !important;
+        color: var(--lightGray) !important;
+      }
+    }
+
+    .react-calendar__tile--active {
+      background-color: var(--cyan) !important;
+      color: var(--darkGray) !important;
+      font-weight: bold;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: var(--cyan) !important;
+        color: var(--darkGray) !important;
+      }
+    }
+
+    .react-calendar__tile--now {
+      background: none !important;
+      color: inherit;
+    }
+
+    .react-calendar__month-view__days__day--weekend {
+      &:first-child {
+        color: #ff8080 !important;  // 일요일
+      }
+      &:last-child {
+        color: #80b3ff !important;  // 토요일
+      }
+    }
+
+    .react-calendar__navigation {
+      button {
+        &:enabled {
+          &:hover,
+          &:focus {
+            background-color: rgba(0, 255, 255, 0.1);
+            color: var(--cyan);
+          }
+        }
+      }
+    }
+
+    .react-calendar__tile--now:not(.react-calendar__tile--disabled) {
+      &:enabled {
+        background: ${({ selectedOption }) => {
+          if (!selectedOption) return 'none';
+          switch (selectedOption.type) {
+            case 'SAME_DAY':
+              return 'rgba(0, 255, 255, 0.1)';
+            default:
+              return 'none';
+          }
+        }};
+        border-radius: 4px;
+      }
+    }
+
+    .react-calendar__tile--nextDay:not(.react-calendar__tile--disabled) {
+      &:enabled {
+        background: ${({ selectedOption }) => 
+          selectedOption?.type === 'NEXT_DAY' 
+            ? 'rgba(0, 255, 255, 0.1)' 
+            : 'none'
+        };
+        border-radius: 4px;
+      }
+    }
+
+    .react-calendar__tile--regular:not(.react-calendar__tile--disabled) {
+      &:enabled {
+        background: ${({ selectedOption }) => 
+          selectedOption?.type === 'REGULAR' 
+            ? 'rgba(0, 255, 255, 0.1)' 
+            : 'none'
+        };
+        border-radius: 4px;
+      }
+    }
+
+    // 가용 날짜 하이라이트 스타일
+    .highlight-date {
+      background-color: rgba(0, 255, 255, 0.1) !important;
+      color: var(--cyan) !important;
+      border-radius: 4px;
+
+      &:hover {
+        background-color: rgba(0, 255, 255, 0.2) !important;
+      }
+
+      &.react-calendar__tile--active {
+        background-color: var(--cyan) !important;
+        color: var(--darkGray) !important;
+        font-weight: bold;
+      }
+    }
+
+    // 선택 불가능한 날짜
+    .react-calendar__tile--disabled {
+      opacity: 0.3;
+      background: none !important;
+      color: var(--lightGray) !important;
+    }
   }
 `;
 
 const TimeSection = styled.div`
+  width: 100%;
   background: var(--darkGray);
   border-radius: 8px;
   padding: 1rem;
   position: relative;
+
+  .select-date-message {
+    text-align: center;
+    color: var(--lightGray);
+    padding: 2rem;
+    background: var(--darkGray);
+    border-radius: 8px;
+  }
 `;
 
 const SectionTitle = styled.h3`
@@ -208,8 +388,8 @@ interface TimeSlotCache {
 const DeliveryDatePage: React.FC = () => {
   const navigate = useNavigate();
   const { updateOrderData } = useOrderStore();  // orderStore 추가
-  const [selectedOption, setSelectedOption] = useState<DeliveryOption | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedOption, setSelectedOption] = useState<DeliveryOption | null>(null);
   const [selectedLoadingTime, setSelectedLoadingTime] = useState<TimeSlot | null>(null);
   const [selectedUnloadingTime, setSelectedUnloadingTime] = useState<TimeSlot | null>(null);
   const [timeSlots, setTimeSlots] = useState<{ loading_times: TimeSlot[], unloading_times: TimeSlot[] }>({
@@ -426,20 +606,43 @@ const DeliveryDatePage: React.FC = () => {
               <OptionPrice>
                 {option.price === 0 ? '추가요금없음' : `${option.price.toLocaleString()}원`}
               </OptionPrice>
-              <div>{option.description}</div>
+              <OptionDescription>{option.description}</OptionDescription>
             </OptionButton>
           );
         })}
       </DeliveryOptions>
 
       <PageLayout>
-        <CalendarContainer>
+        <CalendarContainer selectedOption={selectedOption}>
           <Calendar
             onChange={handleCalendarSelect}
-            value={selectedDate}
+            value={null}
             locale="ko-KR"
             formatDay={(locale, date) => date.getDate().toString()}
             tileDisabled={({ date }) => isDateDisabled(date)}
+            tileClassName={({ date }) => {
+              if (!selectedOption) return '';
+              
+              const today = startOfDay(new Date());
+              const targetDate = startOfDay(date);
+              
+              switch (selectedOption.type) {
+                case 'SAME_DAY':
+                  return isSameDay(targetDate, today) ? 'highlight-date' : '';
+                  
+                case 'NEXT_DAY':
+                  return isSameDay(targetDate, addDays(today, 1)) ? 'highlight-date' : '';
+                  
+                case 'REGULAR':
+                  const threeDaysLater = addDays(today, 3);
+                  const ninetyDaysLater = addDays(today, 90);
+                  return !isBefore(targetDate, threeDaysLater) && 
+                         !isBefore(ninetyDaysLater, targetDate) ? 'highlight-date' : '';
+                  
+                default:
+                  return '';
+              }
+            }}
             minDate={new Date()}
             maxDate={addDays(new Date(), 90)}
             formatShortWeekday={(locale, date) => {
@@ -454,14 +657,20 @@ const DeliveryDatePage: React.FC = () => {
         </CalendarContainer>
 
         <TimeSection>
-          <TimeSelector
-            loadingTime={selectedLoadingTime?.time || null}
-            unloadingTime={selectedUnloadingTime?.time || null}
-            availableLoadingTimes={formattedLoadingTimes}
-            availableUnloadingTimes={formattedUnloadingTimes}
-            onTimeSelect={handleTimeSelect}
-            isNextDisabled={!selectedLoadingTime || !selectedUnloadingTime}
-          />
+          {selectedDate ? (
+            <TimeSelector
+              loadingTime={selectedLoadingTime?.time || null}
+              unloadingTime={selectedUnloadingTime?.time || null}
+              availableLoadingTimes={formattedLoadingTimes}
+              availableUnloadingTimes={formattedUnloadingTimes}
+              onTimeSelect={handleTimeSelect}
+              isNextDisabled={!selectedLoadingTime || !selectedUnloadingTime}
+            />
+          ) : (
+            <div className="select-date-message">
+              배송 옵션과 날짜를 선택해주세요
+            </div>
+          )}
         </TimeSection>
       </PageLayout>
 
