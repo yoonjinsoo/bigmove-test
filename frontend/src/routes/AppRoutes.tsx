@@ -8,7 +8,7 @@ import HomePage from '../pages/HomePage';
 import SignUpPage from '../pages/SignUpPage';
 import LoginPage from '../components/auth/LoginPage';
 import ItemListPage from '../components/ItemSelection/ItemListPage';
-import ItemDetailPage from '../pages/ItemDetailPage';
+import ItemDetailPage from '../components/ItemSelection/ItemDetailPage';
 import DeliveryDatePage from '../pages/DeliveryDatePage';
 import SelectionSummaryPage from '../pages/SelectionSummaryPage';
 import AddressPage from '../pages/AddressPage';

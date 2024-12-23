@@ -64,11 +64,6 @@ const StyledItemName = styled.h3`
   animation: pulseIn 0.5s ease-out;
 `;
 
-const StepTitle = styled.h1.attrs({ className: 'step-title' })`
-  word-break: keep-all;
-  white-space: pre-wrap;
-`;
-
 const ItemListPage: React.FC = () => {
   const { categoryId } = useParams();
   const navigate = useNavigate();
@@ -91,7 +86,7 @@ const ItemListPage: React.FC = () => {
       <div className="step-progress-bar">
         <ProgressBar currentStep={2} totalSteps={8} />
       </div>
-      <StepTitle>물품을 선택해주세요</StepTitle>
+      <h1 className="step-title">물품을 선택해주세요</h1>
       <BackButton onClick={handleBack}>
         <FaArrowLeft /> 이전으로
       </BackButton>

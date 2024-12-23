@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useItemSelection } from '../contexts/ItemSelectionContext';
-import apiService from '../services/apiService';
-import { ItemDetail } from '../types/item';
-import ProgressBar from '../components/common/ProgressBar';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import ErrorMessage from '../components/common/ErrorMessage';
+import { useItemSelection } from '../../contexts/ItemSelectionContext';
+import apiService from '../../services/apiService';
+import { ItemDetail } from '../../types/item';
+import ProgressBar from '../common/ProgressBar';
+import LoadingSpinner from '../common/LoadingSpinner';
+import ErrorMessage from '../common/ErrorMessage';
 import { FaArrowLeft } from 'react-icons/fa';
-import { BackButton } from './styles/ItemListStyles';
+import { BackButton } from '../../pages/styles/ItemListStyles';
 import styled from 'styled-components';
 
 interface ItemDetailInfo {
@@ -34,16 +34,58 @@ const OptionList = styled.div`
   margin-top: 20px;
 `;
 
-const OptionCard = styled.div<{ selected?: boolean }>`
+interface OptionCardProps {
+  selected?: boolean;
+}
+
+const OptionCard = styled.div<OptionCardProps>`
   padding: 15px;
   border: 2px solid ${props => props.selected ? props.theme.colors.primary : props.theme.colors.mediumGray};
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.5s ease;
+  opacity: 0;
+  animation: cardFadeIn 0.8s ease-out forwards;
+  animation-delay: calc(var(--index) * 0.2s);
 
   &:hover {
     border-color: ${props => props.theme.colors.primary};
-    transform: translateY(-2px);
+    transform: translateY(-8px);
+    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.95);
+    background-color: rgba(52, 152, 219, 0.2);
+  }
+
+  @keyframes cardFadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+    }
+    60% {
+      transform: translateY(-10px) scale(1.1);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  h3 {
+    transition: all 0.3s ease;
+    &:hover {
+      transform: scale(1.1);
+      color: ${props => props.theme.colors.primary};
+    }
+  }
+
+  p {
+    transition: all 0.3s ease;
+    &:hover {
+      color: ${props => props.theme.colors.primary};
+    }
   }
 `;
 
@@ -108,10 +150,11 @@ const ItemDetailPage: React.FC = () => {
       </BackButton>
       <DetailContainer>
         <OptionList>
-          {itemDetails.map((detail) => (
+          {itemDetails.map((detail, index) => (
             <OptionCard
               key={detail.id}
               onClick={() => handleDetailSelect(detail)}
+              style={{ '--index': index } as React.CSSProperties}
             >
               <h3>{detail.name}</h3>
               <p>{detail.description}</p>

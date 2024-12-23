@@ -211,9 +211,9 @@ const CategoryStep: React.FC = () => {
   return (
     <div className="step-container">
       <div className="step-progress-bar">
-      <ProgressBar currentStep={1} totalSteps={8} />
+        <ProgressBar currentStep={1} totalSteps={8} />
       </div>
-      <StepTitle>배송할 물품의 종류를 선택해주세요</StepTitle>
+      <h1 className="step-title">배송할 물품의 종류를 선택해주세요</h1>
       <CategoryGrid>
         {categories.map((category) => (
           <CategoryCard key={category.id} onClick={() => handleCategorySelect(category.id)}>
@@ -227,7 +227,3 @@ const CategoryStep: React.FC = () => {
 };
 export default CategoryStep;
 
-const StepTitle = styled.h1.attrs({ className: 'step-title' })`
-  word-break: keep-all;  // 단어 단위로 줄바꿈
-  white-space: pre-wrap;  // 공백 유지하며 줄바꿈
-`;

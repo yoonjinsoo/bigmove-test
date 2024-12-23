@@ -53,6 +53,8 @@ const GlobalStyle = createGlobalStyle`
     text-align: center;
     margin-top: 2rem;
     margin-bottom: 3rem;
+    word-break: keep-all;
+    white-space: pre-wrap;
   }
 `;
 
