@@ -7,7 +7,7 @@ import { SignupAgreements } from '../types/auth';
 import HomePage from '../pages/HomePage';
 import SignUpPage from '../pages/SignUpPage';
 import LoginPage from '../components/auth/LoginPage';
-import ItemListPage from '../pages/ItemListPage';
+import ItemListPage from '../components/ItemSelection/ItemListPage';
 import ItemDetailPage from '../pages/ItemDetailPage';
 import DeliveryDatePage from '../pages/DeliveryDatePage';
 import SelectionSummaryPage from '../pages/SelectionSummaryPage';

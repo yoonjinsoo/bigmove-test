@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CategoryStep, ItemDetailStep } from '../components/ItemSelection';
-import ItemListPage from '../pages/ItemListPage';
+import ItemListPage from '../components/ItemSelection/ItemListPage';
 import { ItemSelectionProvider } from '../contexts/ItemSelectionContext';
 
 const OrderRoutes: React.FC = () => {

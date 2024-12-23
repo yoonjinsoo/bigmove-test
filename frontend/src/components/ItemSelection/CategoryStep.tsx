@@ -42,6 +42,27 @@ const CategoryCard = styled.div`
     border-color: var(--cyan);
     transform: translateY(-5px);
   }
+
+  &:active {
+    transform: scale(0.95);
+    background-color: rgba(52, 152, 219, 0.1);
+  }
+
+  animation: cardPulseIn 0.5s ease-out;
+
+  @keyframes cardPulseIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    70% {
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 `;
 
 const CategoryIcon = styled.div`
@@ -52,9 +73,26 @@ const CategoryIcon = styled.div`
   justify-content: center;
   transition: all 0.3s ease;
 
-  ${CategoryCard}:hover & {
+  ${CategoryCard}:hover &,
+  ${CategoryCard}:active & {
     color: #3498db;
     transform: scale(1.1);
+  }
+
+  animation: pulseIn 0.5s ease-out;
+  
+  @keyframes pulseIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    70% {
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 `;
 
