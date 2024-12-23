@@ -25,6 +25,15 @@ const Container = styled.div`
 const AddressContainer = styled.div`
   margin-bottom: 2rem;
   position: relative;
+`;
+
+const FromAddressContainer = styled(AddressContainer)`
+  position: relative;
+  z-index: 3;
+`;
+
+const ToAddressContainer = styled(AddressContainer)`
+  position: relative;
   z-index: 2;
 `;
 
@@ -55,13 +64,17 @@ const Input = styled.input`
   }
 
   &::placeholder {
-    color: var(--text-light-secondary);
+    color: #999;
   }
 `;
 
 const DetailInput = styled(Input)`
   margin-top: 1rem;
   background-color: var(--darker-gray);
+
+  &::placeholder {
+    color: #999;
+  }
 `;
 
 const CompleteButton = styled.button<{ completed?: boolean }>`
@@ -134,6 +147,23 @@ const SearchResultItem = styled.li`
   cursor: pointer;
   transition: background-color 0.2s;
   background-color: var(--dark-gray);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  .place-name {
+    color: var(--cyan);
+    font-size: 0.9rem;
+  }
+
+  .building-name {
+    color: var(--cyan);
+    font-size: 0.9rem;
+  }
+
+  .address {
+    color: var(--text-light);
+  }
 
   &:hover {
     background-color: var(--darker-gray);
@@ -169,7 +199,13 @@ const SearchResultList = memo(function SearchResultList({ results, onSelect, isF
           key={index}
           onClick={() => onSelect(result, isFrom)}
         >
-          {result.address_name}
+          {result.place_name && (
+            <span className="place-name">{result.place_name}</span>
+          )}
+          {result.building_name && (
+            <span className="building-name">{result.building_name}</span>
+          )}
+          <span className="address">{result.address_name}</span>
         </SearchResultItem>
       ))}
     </SearchResults>
@@ -197,7 +233,7 @@ const AddressStep: React.FC<AddressStepProps> = () => {
   const [toSearchResults, setToSearchResults] = useState<KakaoAddressResult[]>([]);
   const [showToAddress, setShowToAddress] = useState(false);
 
-  // 카카오맵 초기화
+  // 카카오맵 초��화
   useEffect(() => {
     const initKakao = async () => {
       try {
@@ -254,7 +290,7 @@ const AddressStep: React.FC<AddressStepProps> = () => {
     setFromAddressCompleted(false);
     setFromSearchResults([]);
     setSelectedFromAddress(null);
-    setShowFromDetailAddress(false);  // 상세주소 입력 칸 숨김
+    setShowFromDetailAddress(false);
     if (toAddressCompleted) {
       setDistance(0);
       setAdditionalFee(0);
@@ -267,7 +303,7 @@ const AddressStep: React.FC<AddressStepProps> = () => {
     setToAddressCompleted(false);
     setToSearchResults([]);
     setSelectedToAddress(null);
-    setShowToDetailAddress(false);  // 상세주소 입력 칸 숨김
+    setShowToDetailAddress(false);
     setDistance(0);
     setAdditionalFee(0);
   };
@@ -293,7 +329,7 @@ const AddressStep: React.FC<AddressStepProps> = () => {
 
   return (
     <Container>
-      <AddressContainer>
+      <FromAddressContainer>
         <Label>출발지(상차지) 주소</Label>
         <SearchInputContainer>
           <Input
@@ -328,22 +364,26 @@ const AddressStep: React.FC<AddressStepProps> = () => {
             />
             <CompleteButton
               onClick={() => {
-                if (isFromAddressButtonEnabled) {
+                if (fromAddressCompleted) {
+                  // 다시 입력하기 클릭 시
+                  handleFromAddressReset();  // 출발지 주소 초기화
+                } else if (isFromAddressButtonEnabled) {
+                  // 처음 완료 버튼 클릭 시
                   setFromAddressCompleted(true);
                   setShowToAddress(true);
                 }
               }}
-              disabled={!isFromAddressButtonEnabled}
+              disabled={!isFromAddressButtonEnabled && !fromAddressCompleted}
               completed={fromAddressCompleted}
             >
               {fromAddressCompleted ? "다시 입력하기" : "출발지 주소 입력 완료"}
             </CompleteButton>
           </>
         )}
-      </AddressContainer>
+      </FromAddressContainer>
 
       {showToAddress && (
-        <AddressContainer>
+        <ToAddressContainer>
           <Label>도착지(하차지) 주소</Label>
           <SearchInputContainer>
             <Input
@@ -373,24 +413,28 @@ const AddressStep: React.FC<AddressStepProps> = () => {
               <DetailInput
                 value={toDetailAddress}
                 onChange={(e) => setToDetailAddress(e.target.value)}
-                placeholder="상세주소를 입력하세요 (예: 지하 1층)"
+                placeholder="상세주소를 입력하세요 (��: 지하 1층)"
                 disabled={toAddressCompleted}
               />
               <CompleteButton
                 onClick={() => {
-                  if (isToAddressButtonEnabled) {
+                  if (toAddressCompleted) {
+                    // 다시 입력하기 클릭 시
+                    handleToAddressReset();  // 도착지 주소 초기화
+                  } else if (isToAddressButtonEnabled) {
+                    // 처음 완료 버튼 클릭 시
                     setToAddressCompleted(true);
                     calculateDistanceAndFee();
                   }
                 }}
-                disabled={!isToAddressButtonEnabled}
+                disabled={!isToAddressButtonEnabled && !toAddressCompleted}
                 completed={toAddressCompleted}
               >
                 {toAddressCompleted ? "다시 입력하기" : "도착지 주소 입력 완료"}
               </CompleteButton>
             </>
           )}
-        </AddressContainer>
+        </ToAddressContainer>
       )}
 
       {distance > 0 && !isCalculating && (

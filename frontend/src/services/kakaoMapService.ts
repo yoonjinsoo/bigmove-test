@@ -1,6 +1,18 @@
 declare global {
   interface Window {
-    kakao: any;
+    kakao: {
+      maps: {
+        load: (callback: () => void) => void;
+        services: {
+          Geocoder: any;
+          Places: any;
+          Status: {
+            OK: string;
+            ERROR: string;
+          };
+        };
+      };
+    };
   }
 }
 
@@ -66,37 +78,92 @@ export const calculateDistance = async (fromAddress: string, toAddress: string):
   });
 };
 
-// 카카오 주소 검색 API 응답 타입
+// 카카오맵 API 응답 타입 정의
 export interface KakaoAddressResult {
   address_name: string;
-  road_address: {
-    address_name: string;
-    building_name?: string;
-    zone_no: string;
-  } | null;
-  address: {
-    address_name: string;
-  };
   x: string;
   y: string;
+  address_type: 'ROAD_ADDR' | 'PLACE';
+  place_name: string;
+  building_name?: string;
+}
+
+// 카카오맵 주소 검색 결과 타입
+interface KakaoGeocodeResult {
+  address_name: string;
+  x: string;
+  y: string;
+  address: {
+    address_name: string;
+    region_1depth_name: string;
+    region_2depth_name: string;
+    region_3depth_name: string;
+  };
+  road_address?: {
+    building_name: string;
+  };
+}
+
+// 카카오맵 장소 검색 결과 타입
+interface KakaoPlaceResult {
+  place_name: string;
+  address_name: string;
+  x: string;
+  y: string;
+  road_address_name: string;
 }
 
 // 주소 검색 함수
-export const searchAddress = async (keyword: string): Promise<KakaoAddressResult[]> => {
+export const searchAddress = async (query: string): Promise<KakaoAddressResult[]> => {
   return new Promise((resolve, reject) => {
-    if (!window.kakao?.maps?.services) {
-      reject(new Error('Kakao Maps API가 로드되지 않았습니다.'));
+    if (!window.kakao?.maps) {
+      reject(new Error('Kakao Maps API not loaded'));
       return;
     }
 
+    let combinedResults: KakaoAddressResult[] = [];
+
+    // 주소 검색 (Geocoder)
     const geocoder = new window.kakao.maps.services.Geocoder();
-    
-    geocoder.addressSearch(keyword, (result: any[], status: string) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        resolve(result);
-      } else {
-        reject(new Error('주소 검색 결과가 없습니다.'));
+    geocoder.addressSearch(query, (
+      addressResults: KakaoGeocodeResult[], 
+      addressStatus: string
+    ) => {
+      if (addressStatus === window.kakao.maps.services.Status.OK) {
+        const formattedAddressResults = addressResults.map((result: KakaoGeocodeResult) => ({
+          address_name: result.address_name,
+          x: result.x,
+          y: result.y,
+          address_type: 'ROAD_ADDR' as const,
+          place_name: '',
+          building_name: result.road_address?.building_name || ''
+        }));
+        combinedResults = [...combinedResults, ...formattedAddressResults];
       }
+
+      // 키워드 검색 (Places)
+      const places = new window.kakao.maps.services.Places();
+      places.keywordSearch(query, (
+        placeResults: KakaoPlaceResult[], 
+        placeStatus: string
+      ) => {
+        if (placeStatus === window.kakao.maps.services.Status.OK) {
+          const formattedPlaceResults = placeResults.map((result: KakaoPlaceResult) => ({
+            address_name: result.address_name,
+            x: result.x,
+            y: result.y,
+            address_type: 'PLACE' as const,
+            place_name: result.place_name
+          }));
+          combinedResults = [...combinedResults, ...formattedPlaceResults];
+        }
+
+        // 중복 제거 및 결과 반환
+        const uniqueResults = Array.from(new Set(combinedResults.map(r => r.address_name)))
+          .map(address => combinedResults.find(r => r.address_name === address)!);
+
+        resolve(uniqueResults);
+      });
     });
   });
 };
