@@ -10,10 +10,19 @@ import { Category as CategoryType } from '../../types/item';
 
 const CategoryGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 2rem;
   padding: 2rem;
-  margin-top: 2rem;  /* 타이틀과의 간격 추가 */
+  margin-top: 2rem;
+  
+  // 기본 (PC) 레이아웃
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+  // 모바일 레이아웃 (768px 미만에서 2열)
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);  // 강제로 2열
+    gap: 1rem;  // 간격 축소
+    padding: 1rem;  // 패딩 축소
+  }
 `;
 
 const CategoryCard = styled.div`
@@ -41,12 +50,20 @@ const CategoryIcon = styled.div`
   margin-bottom: 1.5rem;
   display: flex;
   justify-content: center;
+  transition: all 0.3s ease;
+
+  ${CategoryCard}:hover & {
+    color: #3498db;
+    transform: scale(1.1);
+  }
 `;
 
 const CategoryName = styled.h3`
   color: #f5f5f1;
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
+  word-break: keep-all;  // 단어 단위로 줄바꿈
+  white-space: pre-wrap;  // 공백 유지하며 줄바꿈
 `;
 
 interface CategoryUI {
@@ -158,7 +175,7 @@ const CategoryStep: React.FC = () => {
       <div className="step-progress-bar">
       <ProgressBar currentStep={1} totalSteps={8} />
       </div>
-      <h1 className="step-title">배송할 물품의 종류를 선택해주세요</h1>
+      <StepTitle>배송할 물품의 종류를 선택해주세요</StepTitle>
       <CategoryGrid>
         {categories.map((category) => (
           <CategoryCard key={category.id} onClick={() => handleCategorySelect(category.id)}>
@@ -171,3 +188,8 @@ const CategoryStep: React.FC = () => {
   );
 };
 export default CategoryStep;
+
+const StepTitle = styled.h1.attrs({ className: 'step-title' })`
+  word-break: keep-all;  // 단어 단위로 줄바꿈
+  white-space: pre-wrap;  // 공백 유지하며 줄바꿈
+`;
