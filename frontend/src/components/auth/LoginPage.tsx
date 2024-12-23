@@ -174,6 +174,13 @@ const Input = styled.input<{ hasError?: boolean }>`
   }
 `;
 
+const StyledForm = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const LoginPage: React.FC = () => {
   const { login, error: authError } = useAuth();
   const [formData, setFormData] = useState({
@@ -197,7 +204,7 @@ const LoginPage: React.FC = () => {
   return (
     <LoginContainer>
       {authError && <ErrorMessage>{authError}</ErrorMessage>}
-      <form onSubmit={handleSubmit}>
+      <StyledForm onSubmit={handleSubmit}>
         <StyledTitle>BigMove 로그인하기</StyledTitle>
         <StyledSignUpSection>
           <p>아직 회원이 아니신가요? <Link to="/signup">회원가입하기</Link></p>
@@ -242,7 +249,7 @@ const LoginPage: React.FC = () => {
         </RememberMeWrapper>
         <Button type="submit">로그인</Button>
         <SocialLogin />
-      </form>
+      </StyledForm>
     </LoginContainer>
   );
 };

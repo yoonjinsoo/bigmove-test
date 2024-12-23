@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export const SignUpContainer = styled.div`
   max-width: 480px;
-  margin: 6rem auto 0;
+  margin: 4rem auto 0;
   padding: 40px 20px;
   display: flex;
   flex-direction: column;
