@@ -201,3 +201,70 @@ async def confirm_order(
     except Exception as e:
         logger.error(f"주문 확정 중 오류 발생: {str(e)}")
         raise HTTPException(status_code=500, detail=f"주문 확정 실패: {str(e)}")
+
+@router.post("/{order_id}/complete")
+async def complete_order(
+    order_id: str,
+    db: Session = Depends(get_db),
+    container = Depends(get_service_container)
+):
+    try:
+        # 1. 주문 상태 업데이트
+        order = await container.order_service.update_order_status(
+            db,
+            order_id=order_id,
+            status="PAYMENT_COMPLETED"
+        )
+
+        # 2. 배송 주문 생성
+        shipping_order = container.shipping_order_service.create_shipping_order(
+            db=db,
+            order_id=order.id,
+            company_id=order.shipping_company_id,  # 주문 시 선택한 배송사
+            from_address_id=order.pickup_address_id,
+            to_address_id=order.delivery_address_id
+        )
+
+        return {
+            "status": "success",
+            "message": "주문이 성공적으로 완료되었습니다",
+            "order_id": order_id,
+            "shipping_order_id": shipping_order.id
+        }
+
+    except Exception as e:
+        logger.error(f"주문 완료 처리 중 오류 발생: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="주문 완료 처리 중 오류가 발생했습니다"
+        )
+
+@router.get("/user/{user_id}")
+async def get_user_orders(
+    user_id: int,
+    skip: int = 0,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+    container = Depends(get_service_container)
+):
+    """사용자의 주문 내역 조회"""
+    try:
+        orders = await container.order_service.get_user_orders(db, user_id, skip, limit)
+        return orders
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/{order_id}/details")
+async def get_order_details(
+    order_id: str,
+    db: Session = Depends(get_db),
+    container = Depends(get_service_container)
+):
+    """주문 상세 정보 조회"""
+    try:
+        details = await container.order_service.get_order_details(db, order_id)
+        return details
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -6,6 +6,8 @@ from ..models.order_progress import OrderProgress
 from .quote_service import QuoteService
 from fastapi import HTTPException
 import logging
+from ..models.payment import Payment
+from ..models.shipping_order import ShippingOrder
 
 logger = logging.getLogger(__name__)
 
@@ -151,3 +153,39 @@ class OrderService:
             db.rollback()
             logger.error(f"주소 저장 중 오류 발생: {str(e)}")
             raise HTTPException(status_code=500, detail="주소 저장 중 오류가 발생했습니다")
+
+    async def get_user_orders(self, db: Session, user_id: int, skip: int = 0, limit: int = 10):
+        """사용자의 주문 내역 조회"""
+        return db.query(Order).filter(Order.user_id == user_id)\
+            .order_by(Order.created_at.desc())\
+            .offset(skip).limit(limit).all()
+
+    async def get_order_details(self, db: Session, order_id: str):
+        """주문 상세 정보 조회"""
+        order = db.query(Order).filter(Order.id == order_id).first()
+        if not order:
+            raise HTTPException(status_code=404, detail="주문을 찾을 수 없습니다")
+        
+        # 결제 정보 조회
+        payment = db.query(Payment).filter(Payment.order_id == order_id).first()
+        
+        # 배송 정보 조회
+        shipping = db.query(ShippingOrder).filter(ShippingOrder.order_id == order_id).first()
+        
+        return {
+            "order": order,
+            "payment": payment,
+            "shipping": shipping
+        }
+
+    async def update_order_status(self, db: Session, order_id: str, status: str):
+        """주문 상태 업데이트"""
+        order = db.query(Order).filter(Order.id == order_id).first()
+        if not order:
+            raise HTTPException(status_code=404, detail="주문을 찾을 수 없습니다")
+        
+        order.status = status
+        order.updated_at = datetime.utcnow()
+        db.commit()
+        db.refresh(order)
+        return order

@@ -16,6 +16,9 @@ import ServiceOptionsPage from '../pages/ServiceOptionsPage';
 import { Summary } from '../pages/Summary/Summary';
 import ReviewPage from '../pages/ReviewPage';
 import PaymentTest from '../pages/payment/PaymentTest';
+import PaymentResult from '../pages/payment/PaymentResult';
+import OrderHistory from '../pages/order/OrderHistory';
+import OrderDetail from '../pages/order/OrderDetail';
 
 // Auth Components
 import SignUpForm from '../components/auth/SignUpForm';
@@ -67,6 +70,10 @@ const AppRoutes: React.FC = () => {
       <Route path="/order/summary" element={<Summary />} />
       <Route path="/payment/test" element={<PaymentTest />} />
       <Route path="/review" element={<ReviewPage />} />
+      <Route path="/payment/success" element={<PaymentResult />} />
+      <Route path="/payment/fail" element={<PaymentResult />} />
+      <Route path="/orders/history" element={<OrderHistory />} />
+      <Route path="/order/detail/:orderId" element={<OrderDetail />} />
     </Routes>
   );
 };
