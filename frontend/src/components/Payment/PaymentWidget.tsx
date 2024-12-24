@@ -86,12 +86,20 @@ const PaymentWidget = ({ amount, orderId, orderName, customerName, onSuccess }: 
         throw new Error('결제 위젯이 로드되지 않았습니다.');
       }
 
+      // 모바일 환경 체크
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
       await paymentWidget.requestPayment({
         orderId,
         orderName,
         customerName,
         successUrl: `${window.location.origin}/payment/success`,
         failUrl: `${window.location.origin}/payment/fail`,
+        // 모바일 환경을 위한 추가 설정
+        ...(isMobile && {
+          windowTarget: 'self',
+          useInternalPaymentModule: true
+        })
       });
 
       // 토스페이먼츠는 successUrl로 리다이렉트되므로

@@ -62,24 +62,41 @@ const PaymentResult = () => {
     const orderId = searchParams.get('orderId');
     const amount = searchParams.get('amount');
 
+    console.log('Payment callback params:', { paymentKey, orderId, amount });
+
     const confirmPayment = async () => {
       try {
+        if (!paymentKey || !orderId || !amount) {
+          throw new Error('필수 결제 정보가 누락되었습니다.');
+        }
+
+        console.log('Sending payment confirmation request:', {
+          paymentKey,
+          orderId,
+          amount: Number(amount)
+        });
+
         const response = await api.post('/payments/confirm', {
           paymentKey,
           orderId,
           amount: Number(amount)
         });
 
+        console.log('Payment confirmation response:', response.data);
         setPaymentDetails(response.data);
         setIsLoading(false);
-      } catch (error) {
-        console.error('결제 승인 중 오류 발생:', error);
-        setError('결제 승인 중 오류가 발생했습니다.');
+      } catch (error: any) {
+        console.error('Payment confirmation error details:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
+        setError(error.response?.data?.message || '결제 승인 중 오류가 발생했습니다.');
         setIsLoading(false);
       }
     };
 
-    if (paymentKey && orderId && amount) {
+    if (location.search) {
       confirmPayment();
     } else {
       setError('결제 정보가 올바르지 않습니다.');
