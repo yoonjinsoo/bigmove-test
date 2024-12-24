@@ -91,8 +91,8 @@ const MobileMenuButton = styled.button`
 `;
 
 // 모바일 메뉴 오버레이
-const MobileMenuOverlay = styled.div<{ isOpen: boolean }>`
-  display: ${props => props.isOpen ? 'block' : 'none'};
+const MobileMenuOverlay = styled.div<{ $isOpen: boolean }>`
+  display: ${props => props.$isOpen ? 'block' : 'none'};
   position: fixed;
   top: 0;
   left: 0;
@@ -103,10 +103,10 @@ const MobileMenuOverlay = styled.div<{ isOpen: boolean }>`
 `;
 
 // 모바일 메뉴 컨테이너
-const MobileMenu = styled.div<{ isOpen: boolean }>`
+const MobileMenu = styled.div<{ $isOpen: boolean }>`
   position: fixed;
   top: 0;
-  right: ${props => props.isOpen ? '0' : '-70%'};
+  right: ${props => props.$isOpen ? '0' : '-70%'};
   width: 50%;
   height: 100vh;
   background-color: var(--dark-gray);
@@ -232,8 +232,8 @@ const Header: React.FC = () => {
       </HeaderContainer>
 
       {/* 모바일 메뉴 */}
-      <MobileMenuOverlay isOpen={isMobileMenuOpen} onClick={closeMobileMenu} />
-      <MobileMenu isOpen={isMobileMenuOpen}>
+      <MobileMenuOverlay $isOpen={isMobileMenuOpen} onClick={closeMobileMenu} />
+      <MobileMenu $isOpen={isMobileMenuOpen}>
         <ul>
           <li>
             <a href="/company/greeting.html" target="_blank" rel="noopener noreferrer" onClick={closeMobileMenu}>

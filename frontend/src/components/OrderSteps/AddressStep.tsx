@@ -233,7 +233,7 @@ const AddressStep: React.FC<AddressStepProps> = () => {
   const [toSearchResults, setToSearchResults] = useState<KakaoAddressResult[]>([]);
   const [showToAddress, setShowToAddress] = useState(false);
 
-  // 카카오맵 초��화
+  // 카카오맵 초화
   useEffect(() => {
     const initKakao = async () => {
       try {
@@ -413,7 +413,7 @@ const AddressStep: React.FC<AddressStepProps> = () => {
               <DetailInput
                 value={toDetailAddress}
                 onChange={(e) => setToDetailAddress(e.target.value)}
-                placeholder="상세주소를 입력하세요 (��: 지하 1층)"
+                placeholder="상세주소를 입력하세요 (예: 지하 1층)"
                 disabled={toAddressCompleted}
               />
               <CompleteButton

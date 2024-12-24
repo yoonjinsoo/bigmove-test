@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pydantic_settings import BaseSettings
 import os
+from pydantic import Field
 
 class Settings(BaseSettings):
     # Mail settings
@@ -53,6 +54,9 @@ class Settings(BaseSettings):
     NAVER_CLIENT_SECRET: str = os.getenv("NAVER_CLIENT_SECRET", "")
     KAKAO_CLIENT_ID: str = os.getenv("KAKAO_CLIENT_ID", "")
     KAKAO_CLIENT_SECRET: str = os.getenv("KAKAO_CLIENT_SECRET", "")
+
+    # Toss Payments 설정 추가
+    TOSS_SECRET_KEY: str = Field(default="")
 
     model_config = {
         'from_attributes': True,  # 이전의 orm_mode를 대체

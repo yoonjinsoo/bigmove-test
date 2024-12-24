@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from .routes import (
@@ -65,6 +65,15 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
+# 라우터 등록 전 로깅
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"Incoming request: {request.method} {request.url.path}")
+    logger.info(f"Request headers: {request.headers}")
+    response = await call_next(request)
+    logger.info(f"Response status: {response.status_code}")
+    return response
+
 # 라우터 등록
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
@@ -76,7 +85,6 @@ ROUTER_CONFIGS = [
     (orders.router, "/api/orders", "주문"),
     (product.router, "/api/products", "제품"),
     (notification.router, "/api/notifications", "알림"),
-    (payment.router, "/api/payments", "결제"),
     (quote.router, "/api/quotes", "견적"),
     (review.router, "/api/reviews", "리뷰"),
     (warehouse.router, "/api/warehouses", "창고"),
@@ -86,6 +94,14 @@ ROUTER_CONFIGS = [
 
 for router, prefix, tag in ROUTER_CONFIGS:
     app.include_router(router, prefix=prefix, tags=[tag])
+
+# 결제 라우터 등록 (한 번만)
+logger.info("Registering payment router with prefix: /api")
+app.include_router(
+    payment.router,
+    prefix="/api",
+    tags=["결제"]
+)
 
 if __name__ == "__main__":
     import uvicorn

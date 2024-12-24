@@ -6,6 +6,7 @@ import ProgressBar from '../../components/common/ProgressBar';
 import { MdArrowBack, MdArrowForward } from 'react-icons/md';
 import useOrderStore from '../../store/orderStore';
 import { ButtonContainer, Button } from '../../pages/styles/SelectionSummaryStyles';
+import PaymentWidget from '../../components/Payment/PaymentWidget';
 
 const Container = styled.div`
   max-width: 800px;
@@ -86,6 +87,15 @@ const TotalPriceValue = styled.span`
 export const Summary: React.FC = () => {
   const navigate = useNavigate();
   const orderData = useOrderStore((state) => state.orderData);
+
+  const handlePaymentSuccess = (paymentKey: string) => {
+    const totalAmount = 
+      orderData.price_details.basePrice +
+      (orderData.price_details.additionalFees.distanceFee || 0) +
+      (orderData.service_options.total_option_fee || 0);
+
+    navigate(`/payment/success?paymentKey=${paymentKey}&orderId=order_${Date.now()}&amount=${totalAmount}`);
+  };
 
   if (!orderData) {
     return (
@@ -238,12 +248,19 @@ export const Summary: React.FC = () => {
           </CardContent>
         </SummaryCard>
 
+        <PaymentWidget 
+          amount={price_details.basePrice + 
+            (price_details.additionalFees.distanceFee || 0) + 
+            (service_options.total_option_fee || 0)}
+          orderId={`order_${Date.now()}`}
+          orderName="이사 서비스"
+          customerName={items[0]?.name || "고객"}
+          onSuccess={handlePaymentSuccess}
+        />
+
         <ButtonContainer>
           <Button onClick={() => navigate(-1)}>
             <MdArrowBack size={16} /> 이전으로
-          </Button>
-          <Button onClick={() => navigate('/payment/test')}>
-            결제하기 <MdArrowForward size={16} />
           </Button>
         </ButtonContainer>
       </Container>
