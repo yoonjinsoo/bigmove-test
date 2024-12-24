@@ -333,20 +333,15 @@ const TimeSection = styled.div`
     text-align: center;
     padding: 2rem;
     
-    p {
-      margin: 0;
-      line-height: 1.8;
-      
-      &:first-child {
-        color: var(--cyan);
-        font-size: 0.9rem;
-      }
-      
-      &:last-child {
-        color: var(--white);
-        font-size: 1rem;
-        margin-top: 0.5rem;
-      }
+    .guide-message {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--cyan);
+    }
+    
+    .select-message {
+      display: block;
+      color: var(--white);
     }
   }
 `;
@@ -413,32 +408,18 @@ const DeliveryDatePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    if (hour >= 14) {
-      setErrorMessage('현재 시각은 당일 배송 접수가 마감된 시간입니다. (당일 배송 접수 가능 시간 : 14시까지)\n익일 배송이나 일반 배송을 선택해 주세요.');
-    }
-  }, []);
-
-  const handleOptionSelect = useCallback(async (option: DeliveryOption) => {
-    setSelectedOption(option);
-    setSelectedDate(null);
-    setSelectedLoadingTime(null);
-    setSelectedUnloadingTime(null);
-    setTimeSlots({ loading_times: [], unloading_times: [] });
-    setErrorMessage(null);
-
-    // 당일 배송인 경우 현재 시간 체크
+  const handleOptionSelect = (option: DeliveryOption) => {
     if (option.type === 'SAME_DAY') {
       const now = new Date();
       const hour = now.getHours();
       if (hour >= 14) {
-        setErrorMessage('죄송합니다. 당일 배송은 14시까지만 가능합니다. 익일 배송이나 일반 배송을 이용해주세요.');
+        setErrorMessage('현재 시각은 당일 배송 접수가 마감된 시간입니다.\n(당일 배송 접수 가능 시간 : 14시까지)\n익일 배송이나 일반 배송을 선택해 주세요.');
         return;
       }
     }
-  }, []);
+    setSelectedOption(option);
+    setErrorMessage('');
+  };
 
   const isDateDisabled = useCallback((date: Date) => {
     const today = startOfDay(new Date());
@@ -681,8 +662,8 @@ const DeliveryDatePage: React.FC = () => {
             />
           ) : (
             <div className="select-date-message">
-              <p>배송예약은 4주 이내만 선택 가능합니다</p>
-              <p>배송 옵션과 날짜를 선택해주세요</p>
+              <p className="guide-message">배송예약은 4주 이내만 선택 가능합니다</p>
+              <p className="select-message">배송 옵션과 날짜를 선택해주세요</p>
             </div>
           )}
         </TimeSection>
