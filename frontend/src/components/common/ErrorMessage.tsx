@@ -20,6 +20,8 @@ interface ErrorMessageProps {
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
+  if (!message) return null;
+  
   return <ErrorMessageWrapper>{message}</ErrorMessageWrapper>;
 };
 

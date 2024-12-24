@@ -671,16 +671,16 @@ const DeliveryDatePage: React.FC = () => {
                   
                 case 'REGULAR':
                   const threeDaysLater = addDays(today, 3);
-                  const ninetyDaysLater = addDays(today, 90);
+                  const twentyEightDaysLater = addDays(today, 28);
                   return !isBefore(targetDate, threeDaysLater) && 
-                         !isBefore(ninetyDaysLater, targetDate) ? 'highlight-date' : '';
+                         !isBefore(twentyEightDaysLater, targetDate) ? 'highlight-date' : '';
                   
                 default:
                   return '';
               }
             }}
             minDate={new Date()}
-            maxDate={addDays(new Date(), 90)}
+            maxDate={addDays(new Date(), 28)}
             formatShortWeekday={(locale, date) => {
               const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
               return weekdays[date.getDay()];
