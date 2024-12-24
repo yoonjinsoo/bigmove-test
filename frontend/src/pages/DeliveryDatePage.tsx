@@ -408,18 +408,32 @@ const DeliveryDatePage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleOptionSelect = (option: DeliveryOption) => {
+  useEffect(() => {
+    const now = new Date();
+    const hour = now.getHours();
+    if (hour >= 14) {
+      setErrorMessage('현재 시각은 당일 배송 접수가 마감된 시간입니다. (당일 배송 접수 가능 시간 : 14시까지)\n익일 배송이나 일반 배송을 선택해 주세요.');
+    }
+  }, []);
+
+  const handleOptionSelect = useCallback(async (option: DeliveryOption) => {
+    setSelectedOption(option);
+    setSelectedDate(null);
+    setSelectedLoadingTime(null);
+    setSelectedUnloadingTime(null);
+    setTimeSlots({ loading_times: [], unloading_times: [] });
+    setErrorMessage(null);
+
+    // 당일 배송인 경우 현재 시간 체크
     if (option.type === 'SAME_DAY') {
       const now = new Date();
       const hour = now.getHours();
       if (hour >= 14) {
-        setErrorMessage('현재 시각은 당일 배송 접수가 마감된 시간입니다.\n(당일 배송 접수 가능 시간 : 14시까지)\n익일 배송이나 일반 배송을 선택해 주세요.');
+        setErrorMessage('죄송합니다. 당일 배송은 14시까지만 가능합니다. 익일 배송이나 일반 배송을 이용해주세요.');
         return;
       }
     }
-    setSelectedOption(option);
-    setErrorMessage('');
-  };
+  }, []);
 
   const isDateDisabled = useCallback((date: Date) => {
     const today = startOfDay(new Date());
