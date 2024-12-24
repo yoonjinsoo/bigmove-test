@@ -1,14 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const ErrorContainer = styled.div`
-  padding: 20px;
-  margin: 20px 0;
-  background-color: var(--dark-gray);
-  border: 1px solid var(--red);
-  border-radius: 4px;
-  color: var(--red);
+const ErrorMessageWrapper = styled.div`
+  white-space: pre-line;
+  word-break: keep-all;
+  word-wrap: break-word;
   text-align: center;
+  background: transparent;
+  color: var(--red);
+  
+  @media (max-width: 768px) {
+    padding: 0 1rem;
+    font-size: 0.9rem;
+  }
 `;
 
 interface ErrorMessageProps {
@@ -16,8 +20,7 @@ interface ErrorMessageProps {
 }
 
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ message }) => {
-  if (!message) return null;
-  return <ErrorContainer>{message}</ErrorContainer>;
+  return <ErrorMessageWrapper>{message}</ErrorMessageWrapper>;
 };
 
 export default ErrorMessage;

@@ -622,7 +622,7 @@ const DeliveryDatePage: React.FC = () => {
             </LoadingContainer>
           ) : (
             <ErrorMessageContainer>
-              {errorMessage}
+              <ErrorMessage message={errorMessage} />
             </ErrorMessageContainer>
           )}
         </div>
