@@ -332,16 +332,28 @@ const TimeSection = styled.div`
   .select-date-message {
     text-align: center;
     padding: 2rem;
+    word-break: keep-all;      // 한글 단어 단위 줄바꿈
+    word-wrap: break-word;     // 긴 단어 줄바꿈
     
     .guide-message {
       display: block;
       margin-bottom: 8px;
       color: var(--cyan);
+      
+      @media (max-width: 768px) {
+        padding: 0 1rem;
+        font-size: 0.9rem;
+      }
     }
     
     .select-message {
       display: block;
       color: var(--white);
+      
+      @media (max-width: 768px) {
+        padding: 0 1rem;
+        font-size: 0.9rem;
+      }
     }
   }
 `;
@@ -357,6 +369,20 @@ const LoadingContainer = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 200px;
+`;
+
+const ErrorMessageContainer = styled.div`
+  white-space: pre-line;     // \n 줄바꿈 적용
+  word-break: keep-all;      // 한글 단어 단위 줄바꿈
+  word-wrap: break-word;     // 긴 단어 줄바꿈
+  text-align: center;
+  margin: 1rem 0;
+  color: var(--red);
+  
+  @media (max-width: 768px) {
+    padding: 0 1rem;         // 모바일에서 좌우 여백 추가
+    font-size: 0.9rem;       // 모바일에서 글자 크기 조정
+  }
 `;
 
 const deliveryOptions: DeliveryOption[] = [
@@ -412,7 +438,7 @@ const DeliveryDatePage: React.FC = () => {
     const now = new Date();
     const hour = now.getHours();
     if (hour >= 14) {
-      setErrorMessage('현재 시각은 당일 배송 접수가 마감된 시간입니다. (당일 배송 접수 가능 시간 : 14시까지)\n익일 배송이나 일반 배송을 선택해 주세요.');
+      setErrorMessage('현재 시각은 당일 배송 접수가 마감된 시간입니다.\n(당일 배송 접수 가능 시간 : 14시까지)\n익일 배송이나 일반 배송을 선택해 주세요.');
     }
   }, []);
 
@@ -595,7 +621,9 @@ const DeliveryDatePage: React.FC = () => {
               <LoadingSpinner />
             </LoadingContainer>
           ) : (
-            <ErrorMessage message={errorMessage} />
+            <ErrorMessageContainer>
+              {errorMessage}
+            </ErrorMessageContainer>
           )}
         </div>
       )}
