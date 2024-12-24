@@ -429,7 +429,7 @@ const DeliveryDatePage: React.FC = () => {
 
   const isDateDisabled = useCallback((date: Date) => {
     const today = startOfDay(new Date());
-    const maxDate = addDays(today, 90);
+    const maxDate = addDays(today, 28);
     
     if (isBefore(maxDate, date)) {
       return true;
