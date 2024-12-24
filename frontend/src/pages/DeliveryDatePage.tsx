@@ -331,10 +331,23 @@ const TimeSection = styled.div`
 
   .select-date-message {
     text-align: center;
-    color: var(--lightGray);
     padding: 2rem;
-    background: var(--darkGray);
-    border-radius: 8px;
+    
+    p {
+      margin: 0;
+      line-height: 1.8;
+      
+      &:first-child {
+        color: var(--cyan);
+        font-size: 0.9rem;
+      }
+      
+      &:last-child {
+        color: var(--white);
+        font-size: 1rem;
+        margin-top: 0.5rem;
+      }
+    }
   }
 `;
 
@@ -668,7 +681,8 @@ const DeliveryDatePage: React.FC = () => {
             />
           ) : (
             <div className="select-date-message">
-              배송 옵션과 날짜를 선택해주세요
+              <p>배송예약은 4주 이내만 선택 가능합니다</p>
+              <p>배송 옵션과 날짜를 선택해주세요</p>
             </div>
           )}
         </TimeSection>
