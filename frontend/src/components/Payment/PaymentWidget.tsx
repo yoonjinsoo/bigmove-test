@@ -41,6 +41,7 @@ interface PaymentWidgetProps {
 const PaymentWidget = ({ amount, orderId, orderName, customerName, onSuccess }: PaymentWidgetProps) => {
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
   const [isWidgetReady, setIsWidgetReady] = useState(false);
+  console.log('TOSS KEY:', process.env.REACT_APP_TOSS_WIDGET_CLIENT_KEY);
   const clientKey = process.env.REACT_APP_TOSS_WIDGET_CLIENT_KEY;
   const customerKey = `CUSTOMER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
