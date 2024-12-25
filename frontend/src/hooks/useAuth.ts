@@ -20,26 +20,21 @@ const authApi = {
     return response.data;
   },
 
-  socialLogin: async (provider: string, redirect_uri: string) => {
-    let redirectUri;
-    switch(provider) {
-      case 'google':
-        redirectUri = process.env.REACT_APP_GOOGLE_CALLBACK_URL;
-        break;
-      case 'naver':
-        redirectUri = process.env.REACT_APP_NAVER_CALLBACK_URL;
-        break;
-      case 'kakao':
-        redirectUri = process.env.REACT_APP_KAKAO_CALLBACK_URL;
-        break;
-      default:
-        redirectUri = `${window.location.origin}/auth/callback/${provider}`;
+  socialLogin: async (provider: string, source: string) => {
+    try {
+      console.log(`Attempting ${provider} ${source}`);
+      
+      const response = await axios.get(`${API_URL}/api/auth/login/${provider}`, {
+        params: { source }
+      });
+      
+      console.log(`${provider} auth response:`, response.data);
+      return response.data;
+      
+    } catch (error) {
+      console.error(`${provider} auth error:`, error);
+      throw error;
     }
-    redirectUri = encodeURIComponent(redirectUri || '');
-    const response = await axios.get(
-      `${API_URL}/api/auth/login/${provider}?redirect_uri=${redirectUri}`
-    );
-    return response.data;
   },
 
   completeSocialSignup: async (data: SocialSignupRequest): Promise<AuthResponse> => {
@@ -101,6 +96,13 @@ const authService = {
 interface AdminLoginCredentials {
   email: string;
   password: string;
+}
+
+// 1. 정확한 타입 정의
+interface SocialLoginResponse {
+  authUrl?: string;  // url -> authUrl로 수정
+  redirecting?: boolean;
+  continueAuth?: boolean;
 }
 
 export const useAuth = () => {
@@ -233,61 +235,35 @@ export const useAuth = () => {
   });
 
   // 소셜 로그인
-  const socialLogin = useMutation({
-    mutationFn: async ({ 
-      provider, 
-      source 
-    }: { 
-      provider: string; 
-      source: 'login' | 'signup';
-    }) => {
+  const socialLogin = useMutation<SocialLoginResponse, Error, { provider: string; source: string }>({
+    mutationFn: async ({ provider, source }) => {
       try {
-        if (!['google', 'naver', 'kakao'].includes(provider)) {
-          throw new Error('지원하지 않는 소셜 로그인입니다.');
-        }
-
-        startSocialAuth(provider, source);
-        updateSocialAuthStatus('pending');
-        
-        let redirectUri;
-        switch(provider) {
-          case 'google':
-            redirectUri = `${window.location.origin}${process.env.REACT_APP_GOOGLE_CALLBACK_URL}`;
-            break;
-          case 'naver':
-            redirectUri = `${window.location.origin}${process.env.REACT_APP_NAVER_CALLBACK_URL}`;
-            break;
-          case 'kakao':
-            redirectUri = `${window.location.origin}${process.env.REACT_APP_KAKAO_CALLBACK_URL}`;
-            break;
-          default:
-            redirectUri = `${window.location.origin}/auth/callback/${provider}`;
-        }
-        redirectUri = encodeURIComponent(redirectUri || '');
-        const response = await axios.get(
-          `${API_URL}/api/auth/login/${provider}?redirect_uri=${redirectUri}&source=${source}`
+        const redirectUri = encodeURIComponent(
+          `${window.location.origin}${
+            process.env[`REACT_APP_${provider.toUpperCase()}_CALLBACK_URL`] || 
+            `/auth/callback/${provider}`
+          }`
         );
-        
-        if (response.data.url) {  
-          const sourceParam = `source=${source}`;
-          const authUrl = response.data.url.includes('?') 
-            ? `${response.data.url}&${sourceParam}`
-            : `${response.data.url}?${sourceParam}`;
-            
-          window.location.href = authUrl;
-        } else {
-          throw new Error('인증 URL을 받지 못했습니다.');
-        }
-        
-        return response.data;
+
+        const response = await axios.get<{ url: string }>(
+          `${API_URL}/api/auth/login/${provider}?redirect_uri=${redirectUri}&source=${source}`,
+          {
+            validateStatus: function (status) {
+              return (status >= 200 && status < 300) || status === 401;
+            }
+          }
+        );
+
+        return { authUrl: response.data.url };
       } catch (error) {
-        updateSocialAuthStatus('error');
-        throw error;
+        throw new Error('소셜 로그인 처리 중 오류가 발생했습니다.');
       }
     },
-    onError: (error) => {
-      setError('소셜 로그인 중 오류가 발생했습니다.');
-      clearSocialSignupData();
+    onError: (error: Error) => {
+      if (!error.message.includes('401')) {
+        setError(error.message);
+        clearSocialSignupData();
+      }
     }
   });
 

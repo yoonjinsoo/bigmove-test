@@ -14,6 +14,8 @@ import type { DefaultTheme } from 'styled-components';
 import AdminDashboard from './pages/admin/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ScrollToTop from './components/common/ScrollToTop';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { AxiosError } from 'axios';
 
 const theme: DefaultTheme = {
   colors: {
@@ -38,27 +40,45 @@ const queryClient = new QueryClient({
   },
 });
 
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  const customError = error as AxiosError;
+  
+  // 401 에러는 표시하지 않음
+  if (customError.response?.status === 401) {
+    return null;
+  }
+  
+  return (
+    <div role="alert">
+      <p>오류가 발생했습니다</p>
+      <button onClick={resetErrorBoundary}>다시 시도</button>
+    </div>
+  );
+}
+
 const App: React.FC = () => {
   return (
-    <Router>
-      <ScrollToTop />
-      <ThemeProvider theme={theme}>
-        <QueryClientProvider client={queryClient}>
-          <SignUpProvider>
-            <ItemSelectionProvider>
-              <OrderProvider>
-                <ToastProvider>
-                  <GlobalStyle />
-                  <Header />
-                  <AppRoutes />
-                  <Footer />
-                </ToastProvider>
-              </OrderProvider>
-            </ItemSelectionProvider>
-          </SignUpProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
-    </Router>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Router>
+        <ScrollToTop />
+        <ThemeProvider theme={theme}>
+          <QueryClientProvider client={queryClient}>
+            <SignUpProvider>
+              <ItemSelectionProvider>
+                <OrderProvider>
+                  <ToastProvider>
+                    <GlobalStyle />
+                    <Header />
+                    <AppRoutes />
+                    <Footer />
+                  </ToastProvider>
+                </OrderProvider>
+              </ItemSelectionProvider>
+            </SignUpProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

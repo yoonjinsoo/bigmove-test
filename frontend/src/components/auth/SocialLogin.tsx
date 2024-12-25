@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { NaverIcon, KakaoIcon, GoogleIcon } from './icons/SocialIcons';
 import { useAuth } from '../../hooks/useAuth';
 import { Link } from 'react-router-dom';
+import { AxiosError } from 'axios';
+import axios from 'axios';
 
 const SocialLogin = () => {
   const { socialLogin } = useAuth();
@@ -18,7 +20,15 @@ const SocialLogin = () => {
         window.location.href = result.authUrl;
       }
     } catch (error) {
-      console.error('소셜 로그인 중 오류가 발생했습니다.');
+      // 401 에러는 무시 (정상적인 소셜 로그인 흐름)
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        return;
+      }
+      
+      // 실제 에러만 콘솔에 출력
+      if (process.env.NODE_ENV === 'development') {
+        console.error('소셜 로그인 에러:', error);
+      }
     }
   };
 

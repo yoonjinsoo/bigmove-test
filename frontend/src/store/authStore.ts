@@ -6,25 +6,26 @@ import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 
-interface SocialSignupResponse {
-  temp_user_info: TempUserInfo;
-  is_new_user: boolean;
-}
-
-interface UserInfo {
+export interface UserInfo {
   email: string;
   name: string;
   provider: string;
   id: string;
 }
 
-interface SocialLoginResponse {
-  access_token: string;
-  token_type: string;
-  user_info: UserInfo;
+export interface SocialLoginResponse {
+  url: string;
+  access_token?: string;
+  token_type?: string;
+  user_info?: UserInfo;
 }
 
-type SocialCallbackResponse = SocialSignupResponse | SocialLoginResponse;
+export type SocialCallbackResponse = SocialSignupResponse | SocialLoginResponse;
+
+interface SocialSignupResponse {
+  temp_user_info: TempUserInfo;
+  is_new_user: boolean;
+}
 
 interface SocialAuthState {
   provider: string | null;

@@ -41,6 +41,9 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  validateStatus: function (status) {
+    return (status >= 200 && status < 300) || status === 401;
+  }
 });
 
 // Request 인터셉터 수정
@@ -52,5 +55,8 @@ api.interceptors.request.use((config) => {
   return config;
 }, 
 (error) => {
+  if (error.response?.status === 401) {
+    return Promise.resolve(error.response);
+  }
   return Promise.reject(error);
 });

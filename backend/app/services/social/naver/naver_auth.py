@@ -29,26 +29,33 @@ class NaverAuthService:
 
     async def initialize_oauth(self, redirect_uri: str, source: str):
         try:
+            logger.info(f"=== Naver OAuth 초기화 ===")
+            logger.info(f"Client ID: {self.client_id}")
+            logger.info(f"Redirect URI from settings: {self.redirect_uri}")
+            logger.info(f"Received redirect_uri: {redirect_uri}")
+            logger.info(f"Source: {source}")
+            
             state_data = {
                 'token': generate_state_token(),
                 'source': source
             }
             state = encode_state(state_data)
             
-            self.state = state  # state 저장
-            
             auth_params = {
                 'response_type': 'code',
                 'client_id': self.client_id,
-                'redirect_uri': redirect_uri,
+                'redirect_uri': self.redirect_uri,  # settings에서 가져온 URI 사용
                 'state': state,
-                'scope': 'email profile'  # 네이버는 email과 profile 정보 요청
+                'scope': 'email profile'
             }
             
             auth_url = build_auth_url(
                 "https://nid.naver.com/oauth2.0/authorize",
                 auth_params
             )
+            
+            logger.info(f"Generated auth URL: {auth_url}")
+            logger.info("=== Naver OAuth 초기화 완료 ===")
             
             return {
                 "url": auth_url,

@@ -37,6 +37,10 @@ class GoogleAuthService:
 
     async def initialize_oauth(self, redirect_uri: str, source: str):
         try:
+            logger.info(f"=== Google OAuth 초기화 ===")
+            logger.info(f"Client ID: {self.client_id}")
+            logger.info(f"Redirect URI from settings: {self.redirect_uri}")
+            logger.info(f"Source: {source}")
             # state에 source 정보 포함
             state_data = {
                 'token': generate_state_token(),
@@ -46,7 +50,7 @@ class GoogleAuthService:
             
             auth_params = {
                 'client_id': self.client_id,
-                'redirect_uri': redirect_uri,
+                'redirect_uri': self.redirect_uri,
                 'response_type': 'code',
                 'scope': 'email profile',
                 'state': state

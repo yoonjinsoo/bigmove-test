@@ -9,6 +9,7 @@ import { SignUpContainer, FormWrapper, Button } from '../../components/auth/styl
 import AgreementSection from './AgreementSection';
 import UserInfoInputs from '../../components/auth/UserInfoInputs';
 import { useMutation } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 
 interface LocationState {
   socialData: {
@@ -102,6 +103,52 @@ const StyledMessage = styled.div<{ $isNewUser: boolean }>`
   font-weight: 500;
   background-color: ${props => props.$isNewUser ? '#e8f5e9' : '#ffebee'};
   color: ${props => props.$isNewUser ? '#2e7d32' : '#c62828'};
+`;
+
+const AlertBox = styled.div`
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: rgba(79, 209, 197, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  animation: cardPulseIn 0.5s ease-out;
+
+  @keyframes cardPulseIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+`;
+
+const AlertText = styled.p<{ isError?: boolean }>`
+  text-align: center;
+  margin: 0 0 12px 0;
+  font-size: clamp(14px, 3.5vw, 16px);
+  color: ${props => props.isError ? '#e85c5c' : '#1a73e8'};
+`;
+
+const LoginLink = styled(Link)`
+  display: block;
+  text-align: center;
+  color: #2980b9;
+  font-size: clamp(14px, 3.5vw, 16px);
+  font-weight: 500;
+  text-decoration: underline;
+  padding: 8px;
+  margin-top: 4px;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 8px;
+  }
 `;
 
 const SocialSignup: React.FC = () => {
@@ -259,13 +306,22 @@ const SocialSignup: React.FC = () => {
       <FormWrapper>
         <StyledTitle>BigMove 회원가입</StyledTitle>
         <StyledSubTitle>간편하게 가입하고 배송 견적을 받아보세요!</StyledSubTitle>
-        {socialSignupData && (
-          <StyledMessage $isNewUser={isNewUser}>
-            {isNewUser 
-              ? "회원가입이 가능합니다! 회원가입을 진행해주세요!"
-              : "이미 가입된 회원입니다"}
-          </StyledMessage>
-        )}
+        <AlertBox>
+          {!isNewUser ? (
+            <>
+              <AlertText isError>
+                이미 가입된 회원입니다. 로그인을 해주세요!
+              </AlertText>
+              <LoginLink to="/login">
+                로그인 하러가기
+              </LoginLink>
+            </>
+          ) : (
+            <AlertText>
+              회원가입이 가능합니다! 회원가입을 진행해주세요!
+            </AlertText>
+          )}
+        </AlertBox>
         <form onSubmit={handleSubmit}>
           <UserInfoInputs
             formData={formData}

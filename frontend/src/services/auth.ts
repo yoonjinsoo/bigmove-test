@@ -72,9 +72,15 @@ export const authService = {
     }
   },
 
-  async socialLogin(provider: string, redirect_uri: string) {
+  async socialLogin(provider: string, source: string) {
+    const redirect_uri = `${window.location.origin}/auth/callback/${provider}`;
+    console.log('Redirect URI:', redirect_uri);
+    
     const response = await axios.get(`${API_URL}/api/auth/login/${provider}`, {
-      params: { redirect_uri }
+      params: { 
+        redirect_uri,
+        source 
+      }
     });
     return response.data;
   },
