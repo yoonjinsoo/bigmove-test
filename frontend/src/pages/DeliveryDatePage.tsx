@@ -14,6 +14,7 @@ import TimeSelector from '../components/DateSelection/TimeSelection/TimeSelector
 import { MdArrowBack, MdArrowForward } from 'react-icons/md';
 import { ButtonContainer, Button } from './styles/SelectionSummaryStyles';
 import useOrderStore from '../store/orderStore'; // orderStore 추가
+import { LoadingProgress } from '../components/common/LoadingProgress';
 
 const PageContainer = styled.div`
   max-width: 800px;
@@ -505,24 +506,20 @@ const DeliveryDatePage: React.FC = () => {
     }
   }, []);
 
-  const handleOptionSelect = useCallback(async (option: DeliveryOption) => {
+  const handleOptionSelect = async (option: DeliveryOption) => {
     setSelectedOption(option);
-    setSelectedDate(null);
-    setSelectedLoadingTime(null);
-    setSelectedUnloadingTime(null);
-    setTimeSlots({ loading_times: [], unloading_times: [] });
-    setErrorMessage(null);
-
-    // 당일 배송인 경우 현재 시간 체크
-    if (option.type === 'SAME_DAY') {
-      const now = new Date();
-      const hour = now.getHours();
-      if (hour >= 14) {
-        setErrorMessage('죄송합니다. 당일 배송은 14시까지만 가능합니다. 익일 배송이나 일반 배송을 이용해주세요.');
-        return;
+    
+    if (option.type === 'REGULAR') {
+      setLoading(true);
+      try {
+        if (selectedDate) {
+          await fetchTimeSlots(selectedDate);
+        }
+      } finally {
+        setLoading(false);
       }
     }
-  }, []);
+  };
 
   const isDateDisabled = useCallback((date: Date) => {
     const today = startOfDay(new Date());
@@ -690,17 +687,11 @@ const DeliveryDatePage: React.FC = () => {
       </div>
       <h1 className="step-title">배송 날짜 선택</h1>
       
-      {(loading || errorMessage) && (
+      {errorMessage && (
         <div style={{ marginBottom: '1rem' }}>
-          {loading ? (
-            <LoadingContainer>
-              <LoadingSpinner />
-            </LoadingContainer>
-          ) : (
-            <ErrorMessageContainer>
-              <ErrorMessage message={errorMessage} />
-            </ErrorMessageContainer>
-          )}
+          <ErrorMessageContainer>
+            <ErrorMessage message={errorMessage} />
+          </ErrorMessageContainer>
         </div>
       )}
       
@@ -824,6 +815,12 @@ const DeliveryDatePage: React.FC = () => {
           다음으로 <MdArrowForward size={16} />
         </Button>
       </ButtonContainer>
+
+      {loading && (
+        <LoadingProgress 
+          message="배송 가능한 날짜를 조회하고 있습니다..." 
+        />
+      )}
     </PageContainer>
   );
 };
