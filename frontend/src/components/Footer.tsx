@@ -11,23 +11,15 @@ const FooterContainer = styled.footer`
 
 const FooterGrid = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
 `;
 
 const FooterSection = styled.div`
   flex: 1;
-  max-width: 300px;
-  min-width: 200px;
   text-align: center;
 
   h3 {
