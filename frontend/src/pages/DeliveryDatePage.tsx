@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addDays, isBefore, startOfDay, isSameDay } from 'date-fns';
+import { addDays, isBefore, startOfDay, isSameDay, format } from 'date-fns';
 import ProgressBar from '../components/common/ProgressBar';
 import Calendar from 'react-calendar';
 import type { Value } from 'react-calendar/dist/cjs/shared/types';
@@ -19,6 +19,18 @@ const PageContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem;
+  animation: slideUp 0.3s ease-out;
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   > ${ButtonContainer} {
     margin-top: 0rem;
@@ -47,18 +59,37 @@ const OptionButton = styled.button<{ selected: boolean }>`
   background: ${props => props.selected ? 'var(--darkGray)' : '#282B30'};
   cursor: pointer;
   color: ${props => props.selected ? 'var(--cyan)' : 'var(--darkGray)'};
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  transform: ${props => props.selected ? 'scale(1.02)' : 'scale(1)'};
   font-size: clamp(0.75rem, 2vw, 1rem);
+  animation: cardPulseIn 0.5s ease-out;
 
   &:hover {
     border-color: var(--cyan);
-    color: var(--cyan);
-    transform: translateY(-2px);
+    transform: translateY(-5px);
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @keyframes cardPulseIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    70% {
+      transform: scale(1.1);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 `;
 
@@ -110,6 +141,7 @@ const CalendarContainer = styled.div<CalendarContainerProps>`
     padding: 16px;
     font-family: Arial, Helvetica, sans-serif;
     color: var(--lightGray);
+    transition: all 0.3s ease;
 
     @media (min-width: 768px) {
       margin-left: 20px;
@@ -134,10 +166,12 @@ const CalendarContainer = styled.div<CalendarContainerProps>`
         font-size: 16px;
         color: var(--lightGray);
 
-        &:enabled:hover,
-        &:enabled:focus {
-          background-color: var(--cyan);
-          color: var(--darkGray);
+        &:enabled {
+          &:hover,
+          &:focus {
+            background-color: rgba(0, 255, 255, 0.1);
+            color: var(--cyan);
+          }
         }
       }
     }
@@ -153,16 +187,6 @@ const CalendarContainer = styled.div<CalendarContainerProps>`
         text-decoration: none;
         color: var(--cyan);
       }
-    }
-
-    .react-calendar__month-view__weekdays__weekday:first-child abbr,
-    .react-calendar__month-view__days > div > button:nth-child(7n + 1) {
-      color: #ff4d4d;
-    }
-
-    .react-calendar__month-view__weekdays__weekday:last-child abbr,
-    .react-calendar__month-view__days > div > button:nth-child(7n) {
-      color: #4d94ff;
     }
 
     .react-calendar__month-view__days__day {
@@ -182,35 +206,6 @@ const CalendarContainer = styled.div<CalendarContainerProps>`
       }
     }
 
-    .react-calendar__tile--active {
-      background: var(--cyan) !important;
-      color: var(--darkGray) !important;
-      border-radius: 4px;
-    }
-
-    .react-calendar__tile--disabled {
-      background-color: var(--mediumGray);
-      color: var(--lightGray);
-    }
-
-    .react-calendar__tile {
-      position: relative;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      &:enabled {
-        background: none;
-        transition: all 0.2s ease;
-        
-        &:hover {
-          background-color: rgba(0, 255, 255, 0.2) !important;
-          color: var(--cyan) !important;
-        }
-      }
-    }
-
     .react-calendar__tile--disabled {
       opacity: 0.3;
       background: none !important;
@@ -219,44 +214,6 @@ const CalendarContainer = styled.div<CalendarContainerProps>`
       &:hover {
         background: none !important;
         color: var(--lightGray) !important;
-      }
-    }
-
-    .react-calendar__tile--active {
-      background-color: var(--cyan) !important;
-      color: var(--darkGray) !important;
-      font-weight: bold;
-      border-radius: 4px;
-
-      &:hover {
-        background-color: var(--cyan) !important;
-        color: var(--darkGray) !important;
-      }
-    }
-
-    .react-calendar__tile--now {
-      background: none !important;
-      color: inherit;
-    }
-
-    .react-calendar__month-view__days__day--weekend {
-      &:first-child {
-        color: #ff8080 !important;  // 일요일
-      }
-      &:last-child {
-        color: #80b3ff !important;  // 토요일
-      }
-    }
-
-    .react-calendar__navigation {
-      button {
-        &:enabled {
-          &:hover,
-          &:focus {
-            background-color: rgba(0, 255, 255, 0.1);
-            color: var(--cyan);
-          }
-        }
       }
     }
 
@@ -308,17 +265,83 @@ const CalendarContainer = styled.div<CalendarContainerProps>`
       }
 
       &.react-calendar__tile--active {
-        background-color: var(--cyan) !important;
+        background: var(--cyan) !important;
         color: var(--darkGray) !important;
         font-weight: bold;
+        border-radius: 8px;
+        box-shadow: 0 0 0px rgba(255, 229, 180, 0.6);
+        transform: scale(1.1);
+        z-index: 1;
+        
+        &:hover {
+          background: var(--dark-cyan) !important;
+        }
       }
     }
 
-    // 선택 불가능한 날짜
-    .react-calendar__tile--disabled {
-      opacity: 0.3;
-      background: none !important;
-      color: var(--lightGray) !important;
+    // 월 선택 뷰 스타일 수정
+    .react-calendar__year-view__months__month {
+      padding: 16px !important;  // 클릭 영역 확대
+      background: none;
+      font-size: 14px;
+      color: var(--lightGray);
+      cursor: pointer;  // 커서 포인터 추가
+      transition: all 0.2s ease;
+
+      &:enabled {
+        &:hover,
+        &:focus {
+          background-color: rgba(0, 255, 255, 0.1) !important;
+          color: var(--cyan) !important;
+          transform: scale(1.05);  // 호버 시 약간 확대
+        }
+      }
+
+      &--disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+    }
+
+    // 선택된 월 스타일
+    .react-calendar__tile--hasActive,
+    .react-calendar__tile--active {  // active 상태 추가
+      background-color: var(--cyan) !important;
+      color: var(--darkGray) !important;
+      font-weight: bold;
+      border-radius: 4px;
+      transform: scale(1.05);  // 선택된 상태에서도 약간 확대
+
+      &:hover {
+        background-color: var(--dark-cyan) !important;
+      }
+    }
+
+    .react-calendar__tile {
+      transition: all 0.3s ease;
+      
+      &:enabled:hover {
+        transform: translateY(-2px);
+      }
+      
+      &:active {
+        transform: scale(0.95);
+      }
+      
+      &.highlight-date {
+        animation: pulseIn 0.5s ease-out;
+      }
+    }
+
+    animation: scaleUp 0.5s ease-out;
+  }
+
+  @keyframes scaleUp {
+    from {
+      transform: scale(0.5);
+    }
+    to {
+      transform: scale(1);
     }
   }
 `;
@@ -329,6 +352,16 @@ const TimeSection = styled.div`
   border-radius: 8px;
   padding: 1rem;
   position: relative;
+  animation: fadeIn 0.3s ease-out;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 
   .select-date-message {
     text-align: center;
@@ -386,6 +419,29 @@ const ErrorMessageContainer = styled.div`
   }
 `;
 
+const SelectionInfo = styled.div`
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: rgba(79, 209, 197, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(79, 209, 197, 0.2);
+  animation: cardPulseIn 0.5s ease-out;
+
+  div {
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    span {
+      color: var(--cyan);
+      margin-right: 0.5rem;
+    }
+  }
+`;
+
 const deliveryOptions: DeliveryOption[] = [
   {
     id: "1",
@@ -434,6 +490,12 @@ const DeliveryDatePage: React.FC = () => {
   const [timeSlotCache, setTimeSlotCache] = useState<TimeSlotCache>({});
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [activeStartDate, setActiveStartDate] = useState<Date | null>(null);
+  const [selectedFromTime, setSelectedFromTime] = useState<string>('');
+  const [selectedToTime, setSelectedToTime] = useState<string>('');
+  const [showSelectionInfo, setShowSelectionInfo] = useState(false);
+  const [isLoadingTimeCompleted, setIsLoadingTimeCompleted] = useState(false);
+  const [isUnloadingTimeCompleted, setIsUnloadingTimeCompleted] = useState(false);
 
   useEffect(() => {
     const now = new Date();
@@ -566,7 +628,7 @@ const DeliveryDatePage: React.FC = () => {
     // orderStore에 배송 정보 저장
     updateOrderData({
       delivery_info: {
-        date: selectedDate.toISOString().split('T')[0], // Date를 YYYY-MM-DD 형식의 string으로 변환
+        date: selectedDate.toISOString().split('T')[0], // Date를 YYYY-MM-DD 형식의 string으로 환
         loading_time: selectedLoadingTime.time,
         unloading_time: selectedUnloadingTime.time,
         delivery_option: deliveryOptionMap[selectedOption.type],
@@ -604,9 +666,22 @@ const DeliveryDatePage: React.FC = () => {
       const selected = getAvailableUnloadingTimes().find(slot => slot.time === time);
       if (selected) {
         setSelectedUnloadingTime(selected);
+        setShowSelectionInfo(true);  // 하차시간 선택 시 바로 종합 정보 표시
       }
     }
   }, [timeSlots.loading_times, getAvailableUnloadingTimes]);
+
+  const isAllSelected = useMemo(() => {
+    return !!(selectedDate && 
+      selectedOption && 
+      selectedLoadingTime && 
+      selectedUnloadingTime);
+  }, [selectedDate, selectedOption, selectedLoadingTime, selectedUnloadingTime]);
+
+  const handleToTimeSelect = (time: string) => {
+    setSelectedToTime(time);
+    setShowSelectionInfo(true);  // 하차 시간 선택 시 정보 섹션 표시
+  };
 
   return (
     <PageContainer>
@@ -653,7 +728,7 @@ const DeliveryDatePage: React.FC = () => {
         <CalendarContainer selectedOption={selectedOption}>
           <Calendar
             onChange={handleCalendarSelect}
-            value={null}
+            value={selectedDate}
             locale="ko-KR"
             formatDay={(locale, date) => date.getDate().toString()}
             tileDisabled={({ date }) => isDateDisabled(date)}
@@ -690,6 +765,10 @@ const DeliveryDatePage: React.FC = () => {
             next2Label={null}
             prev2Label={null}
             showNeighboringMonth={false}
+            view="month"
+            minDetail="month"
+            onDrillUp={() => {}}
+            onClickYear={() => {}}
           />
         </CalendarContainer>
 
@@ -712,14 +791,35 @@ const DeliveryDatePage: React.FC = () => {
         </TimeSection>
       </PageLayout>
 
+      {showSelectionInfo && (
+        <SelectionInfo>
+          <div>
+            <span>선택한 옵션:</span>
+            {selectedOption?.label}
+          </div>
+          <div>
+            <span>선택한 날짜:</span>
+            {selectedDate && format(selectedDate, 'yyyy년 MM월 dd일')}
+          </div>
+          <div>
+            <span>상차 시간:</span>
+            {selectedLoadingTime?.time}
+          </div>
+          <div>
+            <span>하차 시간:</span>
+            {selectedUnloadingTime?.time}
+          </div>
+        </SelectionInfo>
+      )}
+
       <ButtonContainer>
         <Button onClick={() => navigate(-1)}>
           <MdArrowBack size={16} /> 이전으로
         </Button>
         <Button 
           primary
-          disabled={!selectedDate || !selectedLoadingTime || !selectedUnloadingTime}
           onClick={handleNext}
+          disabled={!isAllSelected}
         >
           다음으로 <MdArrowForward size={16} />
         </Button>
