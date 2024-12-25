@@ -11,15 +11,18 @@ const FooterContainer = styled.footer`
 
 const FooterGrid = styled.div`
   display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  max-width: 1200px;
+  flex-direction: row;  // 가로 방향 정렬
+  gap: 0.5rem;         // 섹션 사이 간격
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
   margin: 0 auto;
   padding: 0 2rem;
 `;
 
 const FooterSection = styled.div`
-  flex: 1;
+  flex: 1;            // 각 섹션이 동일한 너비를 가짐
+  min-width: 0;
   text-align: center;
 
   h3 {
