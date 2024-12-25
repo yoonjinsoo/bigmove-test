@@ -3,7 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { useToast } from '../../components/common/Toast';
 import { useQueryClient } from '@tanstack/react-query';
-import api from '../../services/api';
+import { api } from '../../utils/api';
 
 type SocialProvider = 'google' | 'naver' | 'kakao';
 
