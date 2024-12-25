@@ -2,7 +2,7 @@ import axios from 'axios';
 import CryptoJS from 'crypto-js';
 import { useAuthStore } from '../store/authStore';
 
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const BASE_URL = process.env.REACT_APP_API_URL || 'https://bigmove-test-production.up.railway.app';
 const ENCRYPTION_KEY = process.env.REACT_APP_ENCRYPTION_KEY || 'your-secret-key';
 
 // 토큰 암호화/복호화 함수
