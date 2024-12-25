@@ -7,6 +7,7 @@ import { MdArrowBack, MdArrowForward } from 'react-icons/md';
 import { ButtonContainer, Button } from '../../pages/styles/SelectionSummaryStyles';
 import axios from 'axios';
 import useOrderStore from '../../store/orderStore';  // orderStore import 추가
+import { LoadingProgress } from '../common/LoadingProgress';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
 
@@ -226,12 +227,17 @@ const AddressStep: React.FC<AddressStepProps> = () => {
   const [selectedToAddress, setSelectedToAddress] = useState<KakaoAddressResult | null>(null);
   const [distance, setDistance] = useState<number>(0);
   const [additionalFee, setAdditionalFee] = useState<number>(0);
-  const [isCalculating, setIsCalculating] = useState<boolean>(false);
+  const [isCalculating, setIsCalculating] = useState(false);
   const navigate = useNavigate();
   const [isKakaoInitialized, setIsKakaoInitialized] = useState(false);
   const [fromSearchResults, setFromSearchResults] = useState<KakaoAddressResult[]>([]);
   const [toSearchResults, setToSearchResults] = useState<KakaoAddressResult[]>([]);
   const [showToAddress, setShowToAddress] = useState(false);
+  const [estimatedDuration, setEstimatedDuration] = useState<number>(0);
+  const [estimatedFare, setEstimatedFare] = useState<number>(0);
+  const [distanceError, setDistanceError] = useState<string | null>(null);
+  const [showDistanceInfo, setShowDistanceInfo] = useState(false);
+  const [duration, setDuration] = useState<number>(0);
 
   // 카카오맵 초화
   useEffect(() => {
@@ -314,16 +320,23 @@ const AddressStep: React.FC<AddressStepProps> = () => {
 
   const calculateDistanceAndFee = async () => {
     try {
-      const calculatedDistance = await calculateDistance(fromAddress, toAddress);
-      setDistance(calculatedDistance);
+      setIsCalculating(true); // 로딩 시작
+      const result = await calculateDistance(fromAddress, toAddress);
+      setDistance(result.distance);
       
-      if (calculatedDistance > 50) {
-        setAdditionalFee(calculatedDistance * 1000);
+      if (result.isLinearDistance) {
+        setDistanceError('자동차 이동거리 측정에 실패하여 직선거리로 안내합니다!\n추후 추가거리에 대한 추가요금이 발생할 수 있습니다!');
+      } else {
+        setDistanceError(null);
       }
+
+      setShowDistanceInfo(true);
     } catch (error) {
-      console.error('Failed to process address information:', error);
+      console.error('거리 계산 중 오류:', error);
+      setDistanceError('거리 계산 중 오류가 발생했습니다.');
+      setShowDistanceInfo(true);
     } finally {
-      setIsCalculating(false);
+      setIsCalculating(false); // 로딩 종료
     }
   };
 
@@ -437,19 +450,31 @@ const AddressStep: React.FC<AddressStepProps> = () => {
         </ToAddressContainer>
       )}
 
-      {distance > 0 && !isCalculating && (
+      {showDistanceInfo && (
         <DistanceInfo>
-          <div>총 이동거리 : {distance.toFixed(1)}km</div>
+          <div>총 이동거리 : {distance}km</div>
           <div>기본 거리(10km이내) : 추가요금 없음(0원)</div>
           {distance > 10 && (
             <>
               <div>추가거리 : {(distance - 10).toFixed(1)}km</div>
               <div>추가요금 : {((distance - 10) * 2000).toLocaleString()}원</div>
-              <AdditionalInfo>
-                10km를 초과한 거리에 대해 1km당 2,000원의 추가요금이 발생됩니다.
-              </AdditionalInfo>
             </>
           )}
+          
+          {distanceError && (
+            <AdditionalInfo style={{ color: '#ff6b6b' }}>
+              {distanceError.split('\n').map((line, i) => (
+                <React.Fragment key={i}>
+                  {line}
+                  {i === 0 && <br />}
+                </React.Fragment>
+              ))}
+            </AdditionalInfo>
+          )}
+          
+          <AdditionalInfo>
+            10km를 초과한 거리에 대해 1km당 2,000원의 추가요금이 발생합니다.
+          </AdditionalInfo>
         </DistanceInfo>
       )}
 
@@ -481,7 +506,9 @@ const AddressStep: React.FC<AddressStepProps> = () => {
           다음으로 <MdArrowForward size={16} />
         </Button>
       </ButtonContainer>
-      {isCalculating && <LoadingSpinner />}
+      {isCalculating && (
+        <LoadingProgress message="거리 계산 중..." />
+      )}
     </Container>
   );
 };

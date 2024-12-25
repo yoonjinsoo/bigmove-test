@@ -58,6 +58,9 @@ class Settings(BaseSettings):
     # Toss Payments 설정 추가
     TOSS_SECRET_KEY: str = Field(default="")
 
+    # 카카오 API 키 설정 추가
+    KAKAO_REST_API_KEY: str
+
     model_config = {
         'from_attributes': True,  # 이전의 orm_mode를 대체
         'env_file': '.env',

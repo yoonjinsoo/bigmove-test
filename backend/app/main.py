@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from .routes import (
     categories, orders, product, notification,
     admin, auth, payment, quote, review,
-    warehouse, delivery, service_options
+    warehouse, delivery, service_options, directions
 )
 from .database import engine, Base
 from .routes.auth import router as auth_router
@@ -102,6 +102,8 @@ app.include_router(
     prefix="/api",
     tags=["결제"]
 )
+
+app.include_router(directions.router)
 
 if __name__ == "__main__":
     import uvicorn

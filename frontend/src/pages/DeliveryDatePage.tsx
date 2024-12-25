@@ -456,7 +456,7 @@ const DeliveryDatePage: React.FC = () => {
       const now = new Date();
       const hour = now.getHours();
       if (hour >= 14) {
-        setErrorMessage('죄송합니다. 당일 배송은 14시까지��� 가능합니다. 익일 배송이나 일반 배송을 이용해주세요.');
+        setErrorMessage('죄송합니다. 당일 배송은 14시까지만 가능합니다. 익일 배송이나 일반 배송을 이용해주세요.');
         return;
       }
     }
