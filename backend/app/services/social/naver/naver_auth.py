@@ -134,7 +134,6 @@ class NaverAuthService:
                 "client_secret": self.client_secret,
                 "code": code,
                 "redirect_uri": self.redirect_uri,
-                "state": self.state
             }
             
             async with httpx.AsyncClient() as client:
