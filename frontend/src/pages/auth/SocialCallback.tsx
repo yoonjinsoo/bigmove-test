@@ -36,7 +36,7 @@ const SocialCallback = () => {
           return;
         }
 
-        const response = await api.get(`/auth/callback/${provider}?code=${code}&state=${state}`);
+        const response = await api.get(`/api/auth/callback/${provider}?code=${code}&state=${state}`);
         console.log('Callback response:', response.data);
 
         // 회원가입 응답 처리 (temp_user_info가 있는 경우)
