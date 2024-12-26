@@ -156,7 +156,7 @@ const SocialSignup: React.FC = () => {
   const { showToast } = useToast();
   const { completeSocialSignup, setAuthToken } = useAuth();
   const socialSignupData = useAuthStore((state) => state.socialSignupData);
-  const { isNewUser } = useAuthStore();
+  const isNewUser = useAuthStore((state) => state.socialSignupData?.is_new_user);
   const tempUserInfo = useAuthStore((state) => state.tempUserInfo);
   const location = useLocation();
 
@@ -333,7 +333,7 @@ const SocialSignup: React.FC = () => {
               name: false
             }}
             helperText={{
-              email: '소셜 계정의 이메일은 수정할 수 없습니다.'
+              email: '소셜 계정의 이메일은 수정할 수 없습니���.'
             }}
           />
           <AgreementSection
