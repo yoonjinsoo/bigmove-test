@@ -122,33 +122,24 @@ async def social_callback(
     code: str,
     state: str,
     request: Request,
-    db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings)
+    db: Session = Depends(get_db)
 ):
-    logger.info(f"=== 소셜 로그인 콜백 처리 시작 - Provider: {provider} ===")
     try:
-        auth_service = get_social_auth_service(provider, settings)
-        logger.info("소셜 인증 서비스 초기화 완료")
+        # 디버깅을 위한 로그 추가
+        logger.info(f"소셜 콜백 요청 - provider: {provider}, code: {code}")
         
-        logger.info("콜백 처리 시작")
-        result = await auth_service.handle_callback(
-            code=code,
-            state=state,
-            request=request,
-            db=db
-        )
-        logger.info("소셜 인증 콜백 처리 완료")
+        auth_service = get_social_auth_service(provider)
+        response = await auth_service.handle_callback(code, state, request, db)
         
-        # 임시 저장소 데이터 확인
-        logger.info(f"임시 저장된 사용자 데이터: {result.get('user', {})}")
+        return response
         
-        return result
     except Exception as e:
         logger.error(f"소셜 콜백 처리 중 오류: {str(e)}")
-        logger.exception("상세 오류 정보:")
-        raise HTTPException(status_code=401, detail=str(e))
-    finally:
-        logger.info("=== 소셜 로그인 콜백 처리 종료 ===")
+        # 더 자세한 에러 메시지 반환
+        raise HTTPException(
+            status_code=401,
+            detail=f"인증 처리 중 오류가 발생했습니다: {str(e)}"
+        )
 
 # 테스트용 DB 초기화 (개발 환경에서만 사용)
 @router.delete("/test/reset-db")
