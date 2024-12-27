@@ -129,7 +129,7 @@ const AlertText = styled.p<{ isError?: boolean }>`
   text-align: center;
   margin: 0 0 12px 0;
   font-size: clamp(14px, 3.5vw, 16px);
-  color: ${props => props.isError ? '#e85c5c' : '#1a73e8'};
+  color: ${props => props.isError ? '#e85c5c' : '#4ECDC4'};
 `;
 
 const LoginLink = styled(Link)`
