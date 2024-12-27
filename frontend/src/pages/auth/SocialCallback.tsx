@@ -29,14 +29,34 @@ const SocialCallback = () => {
         const code = params.get('code');
         const state = params.get('state');
         
-        console.log('Callback params:', { code, state });
+        // 디버깅을 위한 상세 로그
+        console.log('Authorization attempt:', {
+          provider,
+          code,
+          state: state ? decodeURIComponent(state) : null
+        });
 
         if (!code || !state) {
           throw new Error('소셜 로그인에 필요한 정보가 누락되었습니다.');
         }
 
-        const response = await api.get(`/api/auth/callback/${provider}?code=${code}&state=${state}`);
-        console.log('Callback response:', response.data);
+        // API 요청 전 헤더 확인
+        console.log('API Request:', {
+          url: `/api/auth/callback/${provider}`,
+          params: { code, state }
+        });
+
+        const response = await api.get(`/api/auth/callback/${provider}?code=${code}&state=${state}`, {
+          // 타임아웃 설정 추가
+          timeout: 10000,
+          // 요청 헤더에 추가 정보
+          headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        });
+
+        console.log('API Response:', response.data);
 
         if ('temp_user_info' in response.data && response.data.temp_user_info) {
           const { temp_user_info, is_new_user } = response.data;
