@@ -122,20 +122,19 @@ async def social_callback(
     code: str,
     state: str,
     request: Request,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    settings = Depends(get_settings)
 ):
     try:
-        # 디버깅을 위한 로그 추가
         logger.info(f"소셜 콜백 요청 - provider: {provider}, code: {code}")
         
-        auth_service = get_social_auth_service(provider)
+        auth_service = get_social_auth_service(provider, settings)
         response = await auth_service.handle_callback(code, state, request, db)
         
         return response
         
     except Exception as e:
         logger.error(f"소셜 콜백 처리 중 오류: {str(e)}")
-        # 더 자세한 에러 메시지 반환
         raise HTTPException(
             status_code=401,
             detail=f"인증 처리 중 오류가 발생했습니다: {str(e)}"
