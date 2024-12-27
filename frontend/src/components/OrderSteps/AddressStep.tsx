@@ -472,6 +472,10 @@ const AddressStep: React.FC<AddressStepProps> = () => {
             </AdditionalInfo>
           )}
           
+          <AdditionalInfo style={{ color: 'var(--cyan)', wordBreak: 'keep-all' }}>
+            상차지와 하차지 간의 거리는 카카오내비를 기반으로 측정하여 산출합니다.
+          </AdditionalInfo>
+          
           <AdditionalInfo>
             10km를 초과한 거리에 대해 1km당 2,000원의 추가요금이 발생합니다.
           </AdditionalInfo>

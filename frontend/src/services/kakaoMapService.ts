@@ -65,11 +65,11 @@ export const calculateDistance = async (fromAddress: string, toAddress: string):
         const response = await fetch(url.toString(), {
           method: 'GET',
           headers: {
-            'Authorization': `KakaoAK ${process.env.REACT_APP_KAKAO_MAP_API_KEY}`
+            'Authorization': `KakaoAK ${process.env.REACT_APP_KAKAO_REST_API_KEY}`
           }
         });
 
-        console.log('API Key:', process.env.REACT_APP_KAKAO_MAP_API_KEY);
+        console.log('API Key:', process.env.REACT_APP_KAKAO_REST_API_KEY);
         console.log('Request URL:', url.toString());
         console.log('Response status:', response.status);
 
