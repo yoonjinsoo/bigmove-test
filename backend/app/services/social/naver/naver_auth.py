@@ -68,9 +68,13 @@ class NaverAuthService:
 
     async def handle_callback(self, code: str, state: str, request: Request, db: Session):
         try:
+            # 1. state 디코딩 로직 수정
             state_data = decode_state(state)
-            source = state_data.get('source')
+            source = state_data.get('source', 'login')  # 기본값 'login' 설정
 
+            # 2. 디버깅용 로그 추가
+            logger.info(f"네이버 콜백 - state_data: {state_data}, source: {source}")
+            
             user_info = await self._get_user_info(code)
             
             existing_user = db.query(User).filter(

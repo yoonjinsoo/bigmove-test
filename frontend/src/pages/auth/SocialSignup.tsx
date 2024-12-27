@@ -333,7 +333,7 @@ const SocialSignup: React.FC = () => {
               name: false
             }}
             helperText={{
-              email: '소셜 계정의 이메일은 수정할 수 없습니���.'
+              email: '소셜 계정의 이메일은 수정할 수 없습니다.'
             }}
           />
           <AgreementSection

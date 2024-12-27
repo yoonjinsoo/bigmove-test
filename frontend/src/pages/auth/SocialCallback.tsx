@@ -29,6 +29,9 @@ const SocialCallback = () => {
         const code = params.get('code');
         const state = params.get('state');
         
+        // 디버깅용 로그 추가
+        console.log('Callback params:', { code, state });
+
         if (!code || !state) {
           console.error('Missing required parameters:', { code, state });
           useAuthStore.getState().setError('소셜 로그인에 필요한 정보가 누락되었습니다.');

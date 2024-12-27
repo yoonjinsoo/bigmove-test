@@ -125,18 +125,16 @@ export const useAuthStore = create<AuthStore>()(
         set((state) => ({ 
           ...state,
           tempUserInfo: data,
+          socialSignupData: {
+            ...state.socialSignupData,
+            temp_user_info: data,
+            is_new_user: true
+          },
           socialAuth: {
             ...state.socialAuth,
             status: 'completed',
             email: data.email,
             name: data.name
-          },
-          tempSocialUser: {
-            provider: data.provider,
-            provider_id: '',
-            email: data.email,
-            name: data.name || '',
-            is_temp: true
           }
         })),
       clearTempUserInfo: () => 
