@@ -29,35 +29,44 @@ const SocialCallback = () => {
         const code = params.get('code');
         const state = params.get('state');
         
-        // 디버깅용 로그 추가
         console.log('Callback params:', { code, state });
 
         if (!code || !state) {
-          console.error('Missing required parameters:', { code, state });
-          useAuthStore.getState().setError('소셜 로그인에 필요한 정보가 누락되었습니다.');
-          navigate('/auth/login', { replace: true });
-          return;
+          throw new Error('소셜 로그인에 필요한 정보가 누락되었습니다.');
         }
 
         const response = await api.get(`/api/auth/callback/${provider}?code=${code}&state=${state}`);
         console.log('Callback response:', response.data);
 
-        // 회원가입 응답 처리 (temp_user_info가 있는 경우)
-        if ('temp_user_info' in response.data) {
+        if ('temp_user_info' in response.data && response.data.temp_user_info) {
           const { temp_user_info, is_new_user } = response.data;
-          if (!temp_user_info.email) {
+          
+          // 데이터 검증 강화
+          if (!temp_user_info.email || !temp_user_info.provider) {
             throw new Error('필수 사용자 정보가 누락되었습니다.');
           }
+
+          // 순서 중요: setSocialSignupData를 먼저 호출
+          useAuthStore.getState().setSocialSignupData({
+            temp_user_info,
+            is_new_user: true
+          });
+          
+          // 그 다음 setTempUserInfo 호출
           useAuthStore.getState().setTempUserInfo(temp_user_info);
-          useAuthStore.getState().setSocialSignupData(response.data);
+          
+          console.log('Store state after update:', useAuthStore.getState());
+          
           navigate('/auth/social-signup', { replace: true });
+          return;
         }
-        // 로그인 응답 처리 (access_token과 user_info가 있는 경우)
-        else if ('access_token' in response.data && 'user_info' in response.data) {
+        
+        if ('access_token' in response.data && 'user_info' in response.data) {
           const { access_token, user_info } = response.data;
-          if (!user_info || !user_info.email || !user_info.name) {
+          if (!user_info?.email || !user_info?.name) {
             throw new Error('필수 사용자 정보가 누락되었습니다.');
           }
+          
           useAuthStore.getState().handleAuthSuccessWithCache(queryClient, {
             token: access_token,
             access_token: access_token,
@@ -66,14 +75,18 @@ const SocialCallback = () => {
               provider: provider
             }
           });
+          
           navigate('/items', { replace: true });
+          return;
         }
-        else {
-          throw new Error('잘못된 응답 형식입니다.');
-        }
+        
+        throw new Error('잘못된 응답 형식입니다.');
+        
       } catch (error) {
         console.error('Social callback error:', error);
-        useAuthStore.getState().setError('소셜 로그인 처리 중 오류가 발생했습니다.');
+        useAuthStore.getState().setError(
+          error instanceof Error ? error.message : '소셜 로그인 처리 중 오류가 발생했습니다.'
+        );
         navigate('/auth/login', { replace: true });
       } finally {
         setIsLoading(false);
