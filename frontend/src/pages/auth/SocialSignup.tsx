@@ -156,7 +156,7 @@ const SocialSignup: React.FC = () => {
   const { showToast } = useToast();
   const { completeSocialSignup, setAuthToken } = useAuth();
   const socialSignupData = useAuthStore((state) => state.socialSignupData);
-  const isNewUser = useAuthStore((state) => state.socialSignupData?.is_new_user);
+  const isNewUser = socialSignupData?.is_new_user;
   const tempUserInfo = useAuthStore((state) => state.tempUserInfo);
   const location = useLocation();
 
@@ -226,6 +226,21 @@ const SocialSignup: React.FC = () => {
       }
     }
   }, [location.search]);
+
+  useEffect(() => {
+    console.log('SocialSignup 마운트:', {
+      전체데이터: socialSignupData,
+      신규회원여부: socialSignupData?.is_new_user,
+      임시정보: socialSignupData?.temp_user_info
+    });
+  }, [socialSignupData]);
+
+  useEffect(() => {
+    console.log('AlertBox 상태:', {
+      조건: !isNewUser,
+      isNewUser값: isNewUser
+    });
+  }, [isNewUser]);
 
   if (!socialSignupData) {
     return <div>Loading...</div>;
