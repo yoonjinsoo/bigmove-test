@@ -72,10 +72,25 @@ const SocialCallback = () => {
             is_new_user
           });
           
+          console.log('setSocialSignupData 후:', {
+            전체데이터: useAuthStore.getState().socialSignupData,
+            신규회원여부: useAuthStore.getState().socialSignupData?.is_new_user
+          });
+          
           // 그 다음 setTempUserInfo 호출
           useAuthStore.getState().setTempUserInfo(temp_user_info);
           
+          console.log('setTempUserInfo 후:', {
+            임시정보: useAuthStore.getState().tempUserInfo
+          });
+          
           console.log('Store state after update:', useAuthStore.getState());
+          
+          console.log('페이지 이동 전 최종상태:', {
+            socialSignupData: useAuthStore.getState().socialSignupData,
+            tempUserInfo: useAuthStore.getState().tempUserInfo,
+            is_new_user: useAuthStore.getState().socialSignupData?.is_new_user
+          });
           
           navigate('/auth/social-signup', { replace: true });
           return;
