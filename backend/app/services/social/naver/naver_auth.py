@@ -9,6 +9,9 @@ from ....database import get_db
 from ....core.config import settings, Settings
 from ....utils.state import encode_state, decode_state, generate_state_token, build_auth_url
 from .naver_utils import NAVER_TOKEN_URL, NAVER_USERINFO_URL  # 상수 import 추가
+from httpx import Client, HTTPError, ConnectError
+import ssl
+import asyncio
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +19,10 @@ class TokenError(Exception):
     pass
 
 class UserInfoError(Exception):
+    pass
+
+class NaverAuthError(Exception):
+    """네이버 인증 관련 커스텀 예외"""
     pass
 
 class NaverAuthService:
@@ -27,6 +34,15 @@ class NaverAuthService:
         self.provider_name = "naver"
         self.jwt_secret_key = settings.JWT_SECRET_KEY
         self.state = None  # state 속성 추가
+        self.client = Client(
+            verify=True,  # SSL 인증서 검증 활성화
+            timeout=30.0,  # 타임아웃 증가
+            http2=False,  # HTTP/2 비활성화
+        )
+        
+        # SSL 컨텍스트 설정
+        self.ssl_context = ssl.create_default_context()
+        self.ssl_context.set_ciphers('DEFAULT@SECLEVEL=1')  # SSL 보안 레벨 조정
 
     async def initialize_oauth(self, redirect_uri: str, source: str):
         try:
@@ -166,3 +182,32 @@ class NaverAuthService:
         except httpx.HTTPError as e:
             logger.error(f"네이버 API 요청 중 오류: {str(e)}")
             raise TokenError(f"토큰 또는 사용자 정보 요청 실패: {str(e)}")
+
+    async def get_user_info(self, access_token: str) -> dict:
+        try:
+            headers = {
+                'Authorization': f'Bearer {access_token}',
+                'Content-Type': 'application/json'
+            }
+            
+            # 재시도 로직 추가
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    response = self.client.get(
+                        'https://openapi.naver.com/v1/nid/me',
+                        headers=headers,
+                        timeout=10.0
+                    )
+                    response.raise_for_status()
+                    return response.json()
+                except ConnectError as e:
+                    if attempt == max_retries - 1:
+                        raise
+                    await asyncio.sleep(1)  # 재시도 전 대기
+                    
+        except Exception as e:
+            logger.error(f"네이버 사용자 정보 요청 실패: {str(e)}")
+            raise NaverAuthError("사용자 정보를 가져오는데 실패했습니다.")
+        finally:
+            self.client.close()
