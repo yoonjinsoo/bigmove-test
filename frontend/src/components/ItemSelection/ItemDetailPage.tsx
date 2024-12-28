@@ -4,7 +4,7 @@ import { useItemSelection } from '../../contexts/ItemSelectionContext';
 import apiService from '../../services/apiService';
 import { ItemDetail } from '../../types/item';
 import ProgressBar from '../common/ProgressBar';
-import LoadingSpinner from '../common/LoadingSpinner';
+import { LoadingProgress } from '../common/LoadingProgress';
 import ErrorMessage from '../common/ErrorMessage';
 import { FaArrowLeft } from 'react-icons/fa';
 import { BackButton } from '../../pages/styles/ItemListStyles';
@@ -96,6 +96,7 @@ const ItemDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [itemDetails, setItemDetails] = useState<ItemDetailInfo[]>([]);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   useEffect(() => {
     const fetchItemDetail = async () => {
@@ -123,8 +124,12 @@ const ItemDetailPage: React.FC = () => {
   }, [itemId, state.selectedCategory, navigate]);
 
   const handleDetailSelect = (detail: ItemDetailInfo) => {
+    setIsNavigating(true);
     dispatch({ type: 'SELECT_ITEM_DETAIL', payload: detail });
-    navigate('/selection-summary');  // 옵션 선택 즉시 선택 내역 확인 페이지로 이동
+    
+    setTimeout(() => {
+      navigate('/selection-summary');
+    }, 500);
   };
 
   const handleBack = () => {
@@ -135,7 +140,7 @@ const ItemDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingProgress message="상세 정보를 불러오고 있습니다..." />;
   if (error) return <ErrorMessage message={error} />;
   if (!itemDetails.length) return <ErrorMessage message="상세 옵션을 찾을 수 없습니다." />;
 
@@ -162,6 +167,11 @@ const ItemDetailPage: React.FC = () => {
           ))}
         </OptionList>
       </DetailContainer>
+      {isNavigating && (
+        <LoadingProgress 
+          message="선택하신 내용을 저장하고 있습니다..." 
+        />
+      )}
     </div>
   );
 };

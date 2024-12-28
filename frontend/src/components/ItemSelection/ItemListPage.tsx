@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ProgressBar from '../common/ProgressBar';
-import LoadingSpinner from '../common/LoadingSpinner';
+import { LoadingProgress } from '../common/LoadingProgress';
 import ErrorMessage from '../common/ErrorMessage';
 import EmptyState from '../common/EmptyState';
 import { FaArrowLeft } from 'react-icons/fa';
@@ -68,7 +68,7 @@ const ItemListPage: React.FC = () => {
   const { categoryId } = useParams();
   const navigate = useNavigate();
   const { items, loading, error } = useItemList(categoryId);
-  const { handleBack, handleItemSelect } = useItemNavigation();
+  const { handleBack, handleItemSelect, isLoading } = useItemNavigation();
 
   useEffect(() => {
     if (!categoryId) {
@@ -77,7 +77,7 @@ const ItemListPage: React.FC = () => {
     }
   }, [categoryId, navigate]);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <LoadingProgress message="상품 목록을 불러오고 있습니다..." />;
   if (error) return <ErrorMessage message={error} />;
   if (items.length === 0) return <EmptyState message="해당 카테고리에 물품이 없습니다." />;
 
@@ -101,6 +101,11 @@ const ItemListPage: React.FC = () => {
           </ItemCard>
         ))}
       </ItemGrid>
+      {isLoading && (
+        <LoadingProgress 
+          message="상품 상세 정보를 불러오고 있습니다..." 
+        />
+      )}
     </div>
   );
 };

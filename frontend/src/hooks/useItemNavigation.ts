@@ -1,27 +1,29 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Item } from '../types/item';
 import { useItemSelection } from '../contexts/ItemSelectionContext';
 
-interface UseItemNavigationReturn {
-  handleBack: () => void;
-  handleItemSelect: (categoryId: string, item: Item) => void;
-}
-
-export const useItemNavigation = (): UseItemNavigationReturn => {
+export const useItemNavigation = () => {
   const navigate = useNavigate();
   const { dispatch } = useItemSelection();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleBack = () => {
-    navigate('/items');  // 카테고리 선택 페이지로 이동
+    navigate('/items');
   };
 
   const handleItemSelect = (categoryId: string, item: Item) => {
+    setIsLoading(true);
     dispatch({ type: 'SELECT_ITEM', payload: item });
-    navigate(`/item/${item.id}`);  // ItemDetailPage로 이동
+    
+    setTimeout(() => {
+      navigate(`/item/${item.id}`);
+    }, 500);
   };
 
   return {
     handleBack,
-    handleItemSelect
+    handleItemSelect,
+    isLoading
   };
 };

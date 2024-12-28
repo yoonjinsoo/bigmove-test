@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdArrowBack, MdArrowForward } from 'react-icons/md';
 import ProgressBar from '../components/common/ProgressBar';
+import { LoadingProgress } from '../components/common/LoadingProgress';
 import { useSelectionValidation } from '../hooks/useSelectionValidation';
 import { useSelectionNavigation } from '../hooks/useSelectionNavigation';
 import { calculateBasePrice, formatPrice } from '../utils/priceCalculator';
@@ -22,24 +23,26 @@ const SelectionSummaryPage: React.FC = () => {
   const progressBarRef = React.useRef<HTMLDivElement>(null);
   const { selectedCategory, selectedItem, selectedDetail } = useSelectionValidation();
   const { handleBack, handleDeliveryDateClick } = useSelectionNavigation();
+  const [isNavigating, setIsNavigating] = useState(false);
 
-  // useEffect는 항상 최상위에서 호출
   useEffect(() => {
     if (!selectedCategory || !selectedItem || !selectedDetail) {
       navigate(-1);
     }
   }, [selectedCategory, selectedItem, selectedDetail, navigate]);
 
-  // 필수 데이터가 없으면 렌더링하지 않음
   if (!selectedCategory || !selectedItem || !selectedDetail) {
     return null;
   }
 
-  // 데이터가 있을 때만 가격 계산
   const basePrice = calculateBasePrice(selectedItem, selectedDetail);
 
   const handleNext = () => {
-    handleDeliveryDateClick(selectedCategory, selectedItem, selectedDetail);
+    setIsNavigating(true);
+    
+    setTimeout(() => {
+      handleDeliveryDateClick(selectedCategory, selectedItem, selectedDetail);
+    }, 500);
   };
 
   return (
@@ -77,6 +80,11 @@ const SelectionSummaryPage: React.FC = () => {
           배송 날짜 선택 <MdArrowForward size={16} aria-hidden="true" />
         </Button>
       </ButtonContainer>
+      {isNavigating && (
+        <LoadingProgress 
+          message="배송 날짜 선택 페이지로 이동하고 있습니다..." 
+        />
+      )}
     </div>
   );
 };
