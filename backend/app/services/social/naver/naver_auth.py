@@ -68,14 +68,12 @@ class NaverAuthService:
 
     async def handle_callback(self, code: str, state: str, request: Request, db: Session):
         try:
-            # 1. state 디코딩 로직 수정
             state_data = decode_state(state)
-            source = state_data.get('source', 'login')  # 기본값 'login' 설정
-
-            # 2. 디버깅용 로그 추가
+            source = state_data.get('source', 'login')
+            
             logger.info(f"네이버 콜백 - state_data: {state_data}, source: {source}")
             
-            user_info = await self._get_user_info(code)
+            user_info = await self._get_user_info(code, state)
             
             existing_user = db.query(User).filter(
                 User.email == user_info.get("email"),
@@ -128,7 +126,7 @@ class NaverAuthService:
             logger.error(f"Naver callback handling error: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Naver 로그인 처리 중 오류: {str(e)}")
 
-    async def _get_user_info(self, code: str):
+    async def _get_user_info(self, code: str, state: str):
         try:
             token_url = "https://nid.naver.com/oauth2.0/token"
             token_data = {
@@ -136,7 +134,7 @@ class NaverAuthService:
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "code": code,
-                "state": self.state
+                "state": state
             }
             
             # SSL 검증 옵션 수정
