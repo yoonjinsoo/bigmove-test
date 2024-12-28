@@ -242,6 +242,26 @@ const SocialSignup: React.FC = () => {
     });
   }, [isNewUser]);
 
+  // 컴포넌트 시작 부분에서 값 확인
+  console.log('4. SocialSignup 초기값:', {
+      socialSignupData,
+      isNewUser
+  });
+
+  useEffect(() => {
+    console.log('5. socialSignupData 변경 감지:', {
+        전체: socialSignupData,
+        is_new_user: socialSignupData?.is_new_user
+    });
+  }, [socialSignupData]);
+
+  useEffect(() => {
+    console.log('6. isNewUser 변경 감지:', {
+        isNewUser,
+        조건문결과: !isNewUser
+    });
+  }, [isNewUser]);
+
   if (!socialSignupData) {
     return <div>Loading...</div>;
   }
