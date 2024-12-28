@@ -8,6 +8,7 @@ from ....models import User
 from ....database import get_db
 from ....core.config import settings, Settings
 from ....utils.state import encode_state, decode_state, generate_state_token, build_auth_url
+from .naver_utils import NAVER_TOKEN_URL, NAVER_USERINFO_URL  # 상수 import 추가
 
 logger = logging.getLogger(__name__)
 
@@ -128,7 +129,6 @@ class NaverAuthService:
 
     async def _get_user_info(self, code: str, state: str):
         try:
-            token_url = "https://nid.naver.com/oauth2.0/token"
             token_data = {
                 "grant_type": "authorization_code",
                 "client_id": self.client_id,
@@ -138,37 +138,23 @@ class NaverAuthService:
                 "redirect_uri": self.redirect_uri
             }
             
-            # SSL 검증 옵션 수정
-            async with httpx.AsyncClient(
-                verify=True,  # SSL 인증서 검증 활성화
-                timeout=30.0  # 타임아웃 증가
-            ) as client:
-                try:
-                    # 네이버 토큰 요청
-                    token_response = await client.post(token_url, data=token_data)
-                    token_response.raise_for_status()
+            async with httpx.AsyncClient() as client:
+                # 토큰 요청
+                token_response = await client.post(NAVER_TOKEN_URL, data=token_data)
+                token_response.raise_for_status()
+                token_info = token_response.json()
+                
+                # 사용자 정보 요청
+                headers = {"Authorization": f"Bearer {token_info['access_token']}"}
+                user_response = await client.get(NAVER_USERINFO_URL, headers=headers)
+                user_response.raise_for_status()
+                
+                user_info = user_response.json().get("response", {})
+                if not user_info.get("email"):
+                    raise ValueError("이메일 정보를 찾을 수 없습니다")
                     
-                    logger.info(f"네이버 토큰 응답: {token_response.text}")
-                    
-                    access_token = token_response.json().get("access_token")
-                    if not access_token:
-                        raise ValueError("액세스 토큰을 받지 못했습니다")
-                    
-                    # 사용자 정보 요청
-                    user_info_response = await client.get(
-                        "https://openapi.naver.com/v1/nid/me",
-                        headers={"Authorization": f"Bearer {access_token}"}
-                    )
-                    user_info_response.raise_for_status()
-                    
-                    return user_info_response.json().get("response", {})
-                    
-                except httpx.TimeoutException:
-                    logger.error("네이버 API 요청 타임아웃")
-                    raise
-                except httpx.HTTPError as e:
-                    logger.error(f"네이버 API 요청 실패: {str(e)}")
-                    raise
-        except Exception as e:
-            logger.error(f"네이버 사용자 정보 조회 실패: {str(e)}")
-            raise
+                return user_info
+                
+        except httpx.HTTPError as e:
+            logger.error(f"네이버 API 요청 중 오류: {str(e)}")
+            raise TokenError(f"토큰 또는 사용자 정보 요청 실패: {str(e)}")
