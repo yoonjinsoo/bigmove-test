@@ -89,7 +89,7 @@ const PaymentWidget = ({ amount, orderId, orderName, customerName, onSuccess }: 
       // 모바일 환경 체크
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-      await paymentWidget.requestPayment({
+      const response = await paymentWidget.requestPayment({
         orderId,
         orderName,
         customerName,
@@ -102,15 +102,22 @@ const PaymentWidget = ({ amount, orderId, orderName, customerName, onSuccess }: 
         })
       });
 
-      // 토스페이먼츠는 successUrl로 리다이렉트되므로
-      // 여기서는 별도의 처리가 필요 없습니다.
+      // 결제 성공 시 콜백 실행
+      if (response && onSuccess) {
+        onSuccess(response.paymentKey);
+      }
 
     } catch (error: any) {
       console.error('결제 요청 실패:', error);
+      
       if (error.message === '결제가 취소되었습니다.') {
+        // 결제 취소는 에러가 아닌 정상적인 사용자 행동으로 처리
+        console.log('사용자가 결제를 취소했습니다.');
         return;
       }
-      alert('결제 중 오류가 발생했습니다. 다시 시도해주세요.');
+      
+      // 실제 에러 발생 시
+      alert('결제 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   };
 
