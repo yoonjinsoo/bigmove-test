@@ -342,7 +342,7 @@ const SocialSignup: React.FC = () => {
         <StyledTitle>BigMove 회원가입</StyledTitle>
         <StyledSubTitle>간편하게 가입하고 배송 견적을 받아보세요!</StyledSubTitle>
         <AlertBox>
-          {!isNewUser ? (
+          {isNewUser ? (
             <>
               <AlertText isError>
                 이미 가입된 회원입니다. 로그인을 해주세요!
