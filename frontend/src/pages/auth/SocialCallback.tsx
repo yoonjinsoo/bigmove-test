@@ -46,62 +46,49 @@ const SocialCallback = () => {
           params: { code, state }
         });
 
-        const response = await api.get(`/api/auth/callback/${provider}?code=${code}&state=${state}`, {
-          // 타임아웃 설정 추가
-          timeout: 10000,
-          // 요청 헤더에 추가 정보
-          headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        });
-
-        console.log('API Response:', {
-          원본데이터: response.data,
-          is_new_user: response.data.is_new_user,
-          temp_user_info: response.data.temp_user_info
+        const response = await api.get(`/api/auth/callback/${provider}?code=${code}&state=${state}`);
+        
+        // 1. API 응답 데이터 확인
+        console.log('1. API 응답 원본:', {
+          데이터: response.data,
+          데이터타입: typeof response.data,
+          is_new_user타입: typeof response.data.is_new_user
         });
 
         if ('temp_user_info' in response.data && response.data.temp_user_info) {
           const { temp_user_info, is_new_user } = response.data;
           
-          // 데이터 검증 강화
-          if (!temp_user_info.email || !temp_user_info.provider) {
-            throw new Error('필수 사용자 정보가 누락되었습니다.');
-          }
+          // 2. 구조분해할당 후 값 확인
+          console.log('2. 구조분해할당 결과:', {
+            temp_user_info,
+            is_new_user,
+            is_new_user타입: typeof is_new_user,
+            is_new_user값: is_new_user === false ? '명시적false' : 'false가아님'
+          });
 
-          // 순서 중요: setSocialSignupData를 먼저 호출
+          // 3. Store 업데이트 전 상태
+          console.log('3. Store 업데이트 전:', {
+            현재상태: useAuthStore.getState()
+          });
+
+          // Store 업데이트
           useAuthStore.getState().setSocialSignupData({
             temp_user_info,
             is_new_user
           });
-          
-          console.log('setSocialSignupData 후:', {
-            전체데이터: useAuthStore.getState().socialSignupData,
-            신규회원여부: useAuthStore.getState().socialSignupData?.is_new_user
-          });
-          
-          // 그 다음 setTempUserInfo 호출
-          useAuthStore.getState().setTempUserInfo(temp_user_info);
-          
-          console.log('setTempUserInfo 후:', {
-            임시정보: useAuthStore.getState().tempUserInfo
-          });
-          
-          console.log('Store state after update:', useAuthStore.getState());
-          
-          console.log('페이지 이동 전 최종상태:', {
+
+          // 4. Store 업데이트 후 상태
+          console.log('4. Store 업데이트 후:', {
             socialSignupData: useAuthStore.getState().socialSignupData,
-            tempUserInfo: useAuthStore.getState().tempUserInfo,
-            is_new_user: useAuthStore.getState().socialSignupData?.is_new_user
+            is_new_user값: useAuthStore.getState().socialSignupData?.is_new_user
           });
-          
-          console.log('구조분해할당 결과:', {
-            temp_user_info,
-            is_new_user,
-            타입: typeof is_new_user
+
+          // 5. 페이지 이동 직전 최종 확인
+          console.log('5. 페이지 이동 직전:', {
+            최종is_new_user: useAuthStore.getState().socialSignupData?.is_new_user,
+            이동할페이지: '/auth/social-signup'
           });
-          
+
           navigate('/auth/social-signup', { replace: true });
           return;
         }
