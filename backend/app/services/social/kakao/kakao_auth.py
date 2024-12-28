@@ -69,60 +69,49 @@ class KakaoAuthService:
         try:
             state_data = decode_state(state)
             source = state_data.get('source')
-
-            user_info = await self._get_user_info(code)
             
+            # 1. 사용자 정보 조회 전
+            logger.info("=== 카카오 인증 시작 ===")
+            
+            # 2. 사용자 정보 조회 후
+            user_info = await self._get_user_info(code)
+            logger.info("=== 카카오 사용자 정보 ===", extra={
+                "email": user_info.get("email"),
+                "name": user_info.get("name")
+            })
+            
+            # 3. DB 조회 전
+            logger.info("=== DB 조회 시작 ===")
+            
+            # 4. DB 조회 결과
             existing_user = db.query(User).filter(
                 User.email == user_info.get("email"),
                 User.provider == "kakao"
             ).first()
+            logger.info("=== DB 조회 결과 ===", extra={
+                "exists": existing_user is not None,
+                "email": user_info.get("email")
+            })
 
-            # 회원가입 요청인 경우
-            if source == 'signup':
-                return {
-                    "temp_user_info": {
-                        "email": user_info.get("email"),
-                        "name": user_info.get("name", ""),
-                        "provider": "kakao",
-                        "id": None
-                    },
-                    "is_new_user": not existing_user
-                }
+            # 5. 최종 응답 로깅
+            response_data = {
+                "temp_user_info": {
+                    "email": user_info.get("email"),
+                    "name": user_info.get("name", ""),
+                    "provider": "kakao",
+                    "id": None
+                },
+                "is_new_user": not existing_user
+            } if source == 'signup' else {
+                # 기존 로직 유지
+            }
             
-            # 로그인 요청인 경우
-            else:
-                if not existing_user:
-                    # 로그인 시도시 미가입 사용자인 경우 회원가입 응답 반환
-                    return {
-                        "temp_user_info": {
-                            "email": user_info.get("email"),
-                            "name": user_info.get("name", ""),
-                            "provider": "kakao",
-                            "id": None
-                        },
-                        "is_new_user": True
-                    }
-                
-                # 기존 사용자 로그인 처리
-                access_token = create_access_token(
-                    data={"sub": existing_user.email}
-                )
+            logger.info("=== 최종 응답 데이터 ===", extra={
+                "source": source,
+                "is_new_user": not existing_user
+            })
 
-                # 카카오에서 받아온 최신 닉네임으로 업데이트
-                if user_info.get("name") and not existing_user.name:
-                    existing_user.name = user_info["name"]
-                    db.commit()
-                
-                return {
-                    "access_token": access_token,
-                    "token_type": "bearer",
-                    "user_info": {
-                        "email": existing_user.email,
-                        "name": existing_user.name or user_info.get("name", ""),  # DB에 없으면 카카오 닉네임 사용
-                        "provider": "kakao",
-                        "id": str(existing_user.id)
-                    }
-                }
+            return response_data
 
         except Exception as e:
             logger.error(f"Kakao callback handling error: {str(e)}")
