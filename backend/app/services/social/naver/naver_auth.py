@@ -88,23 +88,28 @@ class NaverAuthService:
             state_data = decode_state(state)
             source = state_data.get('source', 'login')
             
-            logger.info(f"네이버 콜백 - state_data: {state_data}, source: {source}")
+            # SSL 재시도 로직 (네이버 API 간헐적 오류 대응)
+            max_retries = 3
+            retry_count = 0
             
-            user_info = await self._get_user_info(code)
-            
-            logger.info("=== 네이버 인증 결과 ===")
-            logger.info(f"이메일: {user_info.get('email')}")
+            while retry_count < max_retries:
+                try:
+                    user_info = await self._get_user_info(code)
+                    break
+                except Exception as e:
+                    retry_count += 1
+                    if retry_count == max_retries:
+                        logger.error(f"네이버 사용자 정보 조회 실패: {str(e)}")
+                        raise HTTPException(status_code=500, detail="네이버 로그인 처리 중 오류가 발생했습니다.")
+                    await asyncio.sleep(1)  # 1초 대기 후 재시도
             
             existing_user = db.query(User).filter(
                 User.email == user_info.get("email"),
                 User.provider == "naver"
             ).first()
-            
-            logger.info(f"회원구분: {'신규회원' if not existing_user else '기존회원'}")
 
-            # 회원가입 요청인 경우
             if source == 'signup':
-                response_data = {
+                return {
                     "temp_user_info": {
                         "email": user_info.get("email"),
                         "name": user_info.get("name", ""),
@@ -151,8 +156,8 @@ class NaverAuthService:
                 }
 
         except Exception as e:
-            logger.error(f"Naver callback handling error: {str(e)}")
-            raise HTTPException(status_code=500, detail=f"Naver 로그인 처리 중 오류: {str(e)}")
+            logger.error(f"네이버 콜백 처리 중 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
     async def _get_user_info(self, code: str):
         try:
