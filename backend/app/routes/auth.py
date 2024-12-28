@@ -129,16 +129,35 @@ async def social_callback(
         logger.info(f"소셜 콜백 요청 - provider: {provider}, code: {code}")
         
         auth_service = get_social_auth_service(provider, settings)
-        response = await auth_service.handle_callback(code, state, request, db)
+        auth_result = await auth_service.handle_callback(code, state, request, db)
         
-        return response
+        # 프론트엔드로 보내는 응답 직전에 로그
+        logger.info(f"""
+        ===== 프론트엔드 응답 전송 =====
+        1. 응답 데이터:
+           - is_new_user: {auth_result.get('is_new_user')}
+           - email: {auth_result.get('temp_user_info', {}).get('email')}
+           - provider: {auth_result.get('temp_user_info', {}).get('provider')}
+           
+        2. 프론트엔드 라우팅 예상:
+           - is_new_user가 {auth_result.get('is_new_user')}이므로
+           - {'회원가입 진행' if auth_result.get('is_new_user') else '이미 가입된 회원 안내'} 화면으로 이동해야 함
+        """)
+        
+        # 프론트엔드에서 SocialSignup 컴포넌트 마운트 시점 추적을 위한 로그
+        logger.info(f"""
+        3. 프론트엔드 동작 시나리오:
+           - SocialCallback에서 데이터 수신
+           - useAuthStore에 데이터 저장
+           - SocialSignup 컴포넌트로 이동
+           - isNewUser 상태에 따라 메시지 표시
+        """)
+        
+        return auth_result
         
     except Exception as e:
-        logger.error(f"소셜 콜백 처리 중 오류: {str(e)}")
-        raise HTTPException(
-            status_code=401,
-            detail=f"인증 처리 중 오류가 발생했습니다: {str(e)}"
-        )
+        logger.error(f"소셜 콜백 에러: {str(e)}")
+        raise
 
 # 테스트용 DB 초기화 (개발 환경에서만 사용)
 @router.delete("/test/reset-db")
