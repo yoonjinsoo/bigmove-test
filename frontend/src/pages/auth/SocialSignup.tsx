@@ -343,6 +343,10 @@ const SocialSignup: React.FC = () => {
         <StyledSubTitle>간편하게 가입하고 배송 견적을 받아보세요!</StyledSubTitle>
         <AlertBox>
           {isNewUser ? (
+            <AlertText>
+              회원가입이 가능합니다! 회원가입을 진행해주세요!
+            </AlertText>
+          ) : (
             <>
               <AlertText isError>
                 이미 가입된 회원입니다. 로그인을 해주세요!
@@ -351,10 +355,6 @@ const SocialSignup: React.FC = () => {
                 로그인 하러가기
               </LoginLink>
             </>
-          ) : (
-            <AlertText>
-              회원가입이 가능합니다! 회원가입을 진행해주세요!
-            </AlertText>
           )}
         </AlertBox>
         <form onSubmit={handleSubmit}>
