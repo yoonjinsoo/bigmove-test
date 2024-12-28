@@ -76,22 +76,33 @@ class NaverAuthService:
             
             user_info = await self._get_user_info(code)
             
+            logger.info("=== 네이버 인증 결과 ===")
+            logger.info(f"이메일: {user_info.get('email')}")
+            
             existing_user = db.query(User).filter(
                 User.email == user_info.get("email"),
                 User.provider == "naver"
             ).first()
+            
+            logger.info(f"회원구분: {'신규회원' if not existing_user else '기존회원'}")
 
             # 회원가입 요청인 경우
             if source == 'signup':
-                return {
+                response_data = {
                     "temp_user_info": {
                         "email": user_info.get("email"),
                         "name": user_info.get("name", ""),
                         "provider": "naver",
-                        "id": None  # 신규 사용자이므로 아직 ID 없음
+                        "id": None
                     },
                     "is_new_user": not existing_user
                 }
+                logger.info(f"=== 회원가입 응답 데이터 ===")
+                logger.info(f"existing_user 존재여부: {existing_user is not None}")
+                logger.info(f"is_new_user 값: {not existing_user}")
+                logger.info(f"최종 응답: {response_data}")
+                
+                return response_data
             
             # 로그인 요청인 경우
             else:
