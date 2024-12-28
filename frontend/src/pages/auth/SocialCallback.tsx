@@ -56,7 +56,11 @@ const SocialCallback = () => {
           }
         });
 
-        console.log('API Response:', response.data);
+        console.log('API Response:', {
+          원본데이터: response.data,
+          is_new_user: response.data.is_new_user,
+          temp_user_info: response.data.temp_user_info
+        });
 
         if ('temp_user_info' in response.data && response.data.temp_user_info) {
           const { temp_user_info, is_new_user } = response.data;
@@ -90,6 +94,12 @@ const SocialCallback = () => {
             socialSignupData: useAuthStore.getState().socialSignupData,
             tempUserInfo: useAuthStore.getState().tempUserInfo,
             is_new_user: useAuthStore.getState().socialSignupData?.is_new_user
+          });
+          
+          console.log('구조분해할당 결과:', {
+            temp_user_info,
+            is_new_user,
+            타입: typeof is_new_user
           });
           
           navigate('/auth/social-signup', { replace: true });
