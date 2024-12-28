@@ -134,7 +134,8 @@ class NaverAuthService:
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "code": code,
-                "state": state
+                "state": state,
+                "redirect_uri": self.redirect_uri
             }
             
             # SSL 검증 옵션 수정
