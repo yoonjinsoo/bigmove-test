@@ -6,6 +6,7 @@ import { FaEnvelope, FaLock } from 'react-icons/fa';
 import SocialLogin from './SocialLogin';
 import { useAuth } from '../../hooks/useAuth';
 import { useState } from 'react';
+import { LoadingProgress } from '../common/LoadingProgress';
 
 const ErrorMessage = styled.div`
   color: #1a73e8;  // 구글 파란색으로 변경
@@ -187,6 +188,7 @@ const LoginPage: React.FC = () => {
     email: '',
     password: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -198,7 +200,13 @@ const LoginPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login.mutateAsync(formData);
+    setIsLoading(true);
+    
+    try {
+      await login.mutateAsync(formData);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -250,6 +258,12 @@ const LoginPage: React.FC = () => {
         <Button type="submit">로그인</Button>
         <SocialLogin />
       </StyledForm>
+
+      {isLoading && (
+        <LoadingProgress 
+          message="로그인 처리 중입니다..." 
+        />
+      )}
     </LoginContainer>
   );
 };

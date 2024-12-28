@@ -17,6 +17,7 @@ import { useAuthStore } from '../store/authStore';
 import { SocialProvider } from '../types/auth';
 import { toast } from 'react-toastify';
 import { useQueryClient } from '@tanstack/react-query';
+import { LoadingProgress } from '../components/common/LoadingProgress';
 
 interface SocialAuthState {
   status: 'idle' | 'pending';
@@ -31,6 +32,7 @@ const SignUpPage: React.FC = () => {
   const [socialAuth, setSocialAuth] = useState<SocialAuthState>({ status: 'idle' });
   const queryClient = useQueryClient();
   const { setToken, setIsAuthenticated } = useAuthStore();
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const handleSocialSignup = async (provider: string) => {
     try {
@@ -75,7 +77,10 @@ const SignUpPage: React.FC = () => {
   };
 
   const handleSimpleSignUp = () => {
-    navigate('/signup/form');
+    setIsNavigating(true);
+    setTimeout(() => {
+      navigate('/signup/form');
+    }, 500);
   };
 
   return (
@@ -136,6 +141,19 @@ const SignUpPage: React.FC = () => {
       <SkipLoginButton to="/items">
         로그인 없이 진행하기
       </SkipLoginButton>
+
+      {socialAuth.status === 'pending' && (
+        <LoadingProgress 
+          message={`${socialAuth.provider === 'naver' ? '네이버' : 
+            socialAuth.provider === 'kakao' ? '카카오' : '구글'} 로그인 페이지로 이동 중입니다...`} 
+        />
+      )}
+
+      {isNavigating && (
+        <LoadingProgress 
+          message="회원가입 페이지로 이동하고 있습니다..." 
+        />
+      )}
     </SignUpContainer>
   );
 };

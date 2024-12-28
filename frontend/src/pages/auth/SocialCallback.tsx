@@ -4,6 +4,7 @@ import { useAuthStore } from '../../store/authStore';
 import { useToast } from '../../components/common/Toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '../../utils/api';
+import { LoadingProgress } from '../../components/common/LoadingProgress';
 
 type SocialProvider = 'google' | 'naver' | 'kakao';
 
@@ -130,10 +131,10 @@ const SocialCallback = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <div className="text-center">
-        <h2 className="text-xl font-semibold mb-4">소셜 인증 처리 중...</h2>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-      </div>
+      <LoadingProgress 
+        message={`${provider === 'naver' ? '네이버' : 
+          provider === 'kakao' ? '카카오' : '구글'} 로그인 인증 처리 중입니다...`} 
+      />
     </div>
   );
 };
