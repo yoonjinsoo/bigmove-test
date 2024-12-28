@@ -497,6 +497,7 @@ const DeliveryDatePage: React.FC = () => {
   const [showSelectionInfo, setShowSelectionInfo] = useState(false);
   const [isLoadingTimeCompleted, setIsLoadingTimeCompleted] = useState(false);
   const [isUnloadingTimeCompleted, setIsUnloadingTimeCompleted] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);  // 상태 추가
 
   useEffect(() => {
     const now = new Date();
@@ -615,6 +616,8 @@ const DeliveryDatePage: React.FC = () => {
       return;
     }
 
+    setIsNavigating(true);  // 네비게이션 시작
+
     // delivery_option 타입 매핑
     const deliveryOptionMap = {
       'SAME_DAY': 'same-day',
@@ -633,7 +636,9 @@ const DeliveryDatePage: React.FC = () => {
       }
     });
 
-    navigate('/address');
+    setTimeout(() => {
+      navigate('/address');
+    }, 500);
   }, [selectedDate, selectedLoadingTime, selectedUnloadingTime, selectedOption, navigate, updateOrderData]);
 
   const formattedLoadingTimes = useMemo(() => 
@@ -819,6 +824,12 @@ const DeliveryDatePage: React.FC = () => {
       {loading && (
         <LoadingProgress 
           message="배송 가능한 날짜를 조회하고 있습니다..." 
+        />
+      )}
+
+      {isNavigating && (
+        <LoadingProgress 
+          message="주소 입력 페이지로 이동하고 있습니다..." 
         />
       )}
     </PageContainer>

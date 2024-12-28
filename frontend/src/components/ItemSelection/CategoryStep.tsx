@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useItemSelection } from '../../contexts/ItemSelectionContext';
@@ -7,6 +7,7 @@ import { FaBed, FaBiking, FaBoxOpen } from 'react-icons/fa';
 import { GiDesk, GiWashingMachine } from 'react-icons/gi';
 import { CgSmartHomeRefrigerator } from 'react-icons/cg';
 import { Category as CategoryType } from '../../types/item';
+import { LoadingProgress } from '../common/LoadingProgress';
 
 const CategoryGrid = styled.div`
   display: grid;
@@ -153,8 +154,11 @@ const categories: CategoryUI[] = [
 const CategoryStep: React.FC = () => {
   const navigate = useNavigate();
   const { dispatch } = useItemSelection();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCategorySelect = (categoryId: string) => {
+    setIsLoading(true);
+
     const selectedCategory: CategoryType = {
       id: categoryId,
       name: getCategoryName(categoryId),
@@ -162,7 +166,10 @@ const CategoryStep: React.FC = () => {
     };
 
     dispatch({ type: 'SELECT_CATEGORY', payload: selectedCategory });
-    navigate(`/categories/${categoryId}/items`);  // 수정된 부분: 올바른 라우팅 경로로 변경
+    
+    setTimeout(() => {
+      navigate(`/categories/${categoryId}/items`);
+    }, 500);
   };
 
   const getCategoryName = (categoryId: string): string => {
@@ -222,6 +229,11 @@ const CategoryStep: React.FC = () => {
           </CategoryCard>
         ))}
       </CategoryGrid>
+      {isLoading && (
+        <LoadingProgress 
+          message="해당 카테고리의 상품을 불러오고 있습니다..." 
+        />
+      )}
     </div>
   );
 };

@@ -238,6 +238,7 @@ const AddressStep: React.FC<AddressStepProps> = () => {
   const [distanceError, setDistanceError] = useState<string | null>(null);
   const [showDistanceInfo, setShowDistanceInfo] = useState(false);
   const [duration, setDuration] = useState<number>(0);
+  const [isNavigating, setIsNavigating] = useState(false);  // 추가
 
   // 카카오맵 초화
   useEffect(() => {
@@ -490,6 +491,8 @@ const AddressStep: React.FC<AddressStepProps> = () => {
           primary
           disabled={!fromAddressCompleted || !toAddressCompleted}
           onClick={() => {
+            setIsNavigating(true);  // 네비게이션 시작
+
             // orderStore에 주소 정보 저장
             updateOrderData({
               addresses: {
@@ -504,7 +507,9 @@ const AddressStep: React.FC<AddressStepProps> = () => {
               }
             });
 
-            navigate('/service-options');
+            setTimeout(() => {
+              navigate('/service-options');
+            }, 500);
           }}
         >
           다음으로 <MdArrowForward size={16} />
@@ -512,6 +517,12 @@ const AddressStep: React.FC<AddressStepProps> = () => {
       </ButtonContainer>
       {isCalculating && (
         <LoadingProgress message="거리 계산 중..." />
+      )}
+
+      {isNavigating && (
+        <LoadingProgress 
+          message="서비스 옵션 선택 페이지로 이동하고 있습니다..." 
+        />
       )}
     </Container>
   );

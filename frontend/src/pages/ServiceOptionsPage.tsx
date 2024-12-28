@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProgressBar from '../components/common/ProgressBar';
 import ServiceOptionsStep from '../components/OrderSteps/ServiceOptionsStep';
+import { LoadingProgress } from '../components/common/LoadingProgress';
 import { ButtonContainer, Button } from './styles/SelectionSummaryStyles';
 import { MdArrowBack, MdArrowForward } from 'react-icons/md';
 
 const ServiceOptionsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const handleNext = () => {
+    setIsNavigating(true);
+    
+    setTimeout(() => {
+      navigate('/order/summary');
+    }, 500);
+  };
 
   return (
     <div className="step-container">
@@ -19,10 +29,15 @@ const ServiceOptionsPage: React.FC = () => {
         <Button onClick={() => navigate(-1)}>
           <MdArrowBack size={16} /> 이전으로
         </Button>
-        <Button onClick={() => navigate('/order/summary')}>
+        <Button onClick={handleNext}>
           다음으로 <MdArrowForward size={16} />
         </Button>
       </ButtonContainer>
+      {isNavigating && (
+        <LoadingProgress 
+          message="주문 내역 확인 페이지로 이동하고 있습니다..." 
+        />
+      )}
     </div>
   );
 };
