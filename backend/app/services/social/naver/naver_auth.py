@@ -74,7 +74,7 @@ class NaverAuthService:
             
             logger.info(f"네이버 콜백 - state_data: {state_data}, source: {source}")
             
-            user_info = await self._get_user_info(code, state)
+            user_info = await self._get_user_info(code)
             
             existing_user = db.query(User).filter(
                 User.email == user_info.get("email"),
@@ -127,24 +127,21 @@ class NaverAuthService:
             logger.error(f"Naver callback handling error: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Naver 로그인 처리 중 오류: {str(e)}")
 
-    async def _get_user_info(self, code: str, state: str):
+    async def _get_user_info(self, code: str):
         try:
             token_data = {
                 "grant_type": "authorization_code",
                 "client_id": self.client_id,
                 "client_secret": self.client_secret,
                 "code": code,
-                "state": state,
                 "redirect_uri": self.redirect_uri
             }
             
             async with httpx.AsyncClient() as client:
-                # 토큰 요청
                 token_response = await client.post(NAVER_TOKEN_URL, data=token_data)
                 token_response.raise_for_status()
                 token_info = token_response.json()
                 
-                # 사용자 정보 요청
                 headers = {"Authorization": f"Bearer {token_info['access_token']}"}
                 user_response = await client.get(NAVER_USERINFO_URL, headers=headers)
                 user_response.raise_for_status()
