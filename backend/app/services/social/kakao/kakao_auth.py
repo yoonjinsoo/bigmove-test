@@ -82,7 +82,7 @@ class KakaoAuthService:
 
             # 회원가입 요청인 경우
             if source == 'signup':
-                return {
+                response_data = {
                     "temp_user_info": {
                         "email": user_info.get("email"),
                         "name": user_info.get("name", ""),
@@ -91,6 +91,12 @@ class KakaoAuthService:
                     },
                     "is_new_user": not existing_user
                 }
+                logger.info(f"=== 회원가입 응답 데이터 ===")
+                logger.info(f"existing_user 존재여부: {existing_user is not None}")
+                logger.info(f"is_new_user 값: {not existing_user}")
+                logger.info(f"최종 응답: {response_data}")
+                
+                return response_data
             
             # 로그인 요청인 경우
             else:
