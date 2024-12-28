@@ -69,7 +69,7 @@ const SocialCallback = () => {
           // 순서 중요: setSocialSignupData를 먼저 호출
           useAuthStore.getState().setSocialSignupData({
             temp_user_info,
-            is_new_user
+            is_new_user: !is_new_user
           });
           
           // 그 다음 setTempUserInfo 호출
